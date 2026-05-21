@@ -1,0 +1,115 @@
+{
+  "knowledge_types": {
+    "strategic_theory": {
+      "description": "Abstract social principles explaining WHY certain strategies work",
+      "fields": {
+        "principle": "The core social principle or theory (1-2 sentences)",
+        "explanation": "Detailed explanation of why this principle works (2-4 sentences)",
+        "application": "How to apply this principle in real interactions (1-2 sentences)"
+      },
+      "example": {
+        "principle": "Active listening requires suspending judgment and focusing entirely on the speaker's perspective.",
+        "explanation": "When people feel truly heard, their defensive barriers lower, creating psychological safety. This activates cooperative brain circuits rather than threat-response mechanisms, enabling genuine dialogue.",
+        "application": "Practice by paraphrasing what the other person said before responding, and ask clarifying questions rather than immediately offering solutions."
+      }
+    },
+    "illustrative_case": {
+      "description": "Concrete examples showing HOW social principles work in practice",
+      "fields": {
+        "context": "The situation or setting (1-2 sentences)",
+        "action": "What the person did or said (1-2 sentences)",
+        "outcome": "What happened as a result (1-2 sentences)",
+        "lesson": "The takeaway principle demonstrated (1 sentence)"
+      },
+      "example": {
+        "context": "A manager noticed team morale dropping after a failed product launch.",
+        "action": "Instead of assigning blame, she held a retrospective where she first acknowledged her own mistakes, then invited each team member to share their perspective.",
+        "outcome": "Team members felt safe to discuss real issues. They identified process gaps and rebuilt trust, leading to a successful relaunch.",
+        "lesson": "Vulnerability from leaders creates psychological safety that enables honest team communication."
+      }
+    },
+    "practical_scenario": {
+      "description": "Immersive role-play scenarios for hands-on practice of social skills",
+      "fields": {
+        "title": "Brief scenario title",
+        "background": "Setting and context (2-3 sentences)",
+        "characters": "List of characters with brief descriptions",
+        "objective": "What the learner should achieve",
+        "challenge": "The core social difficulty to navigate"
+      },
+      "example": {
+        "title": "The Budget Meeting Standoff",
+        "background": "You are a project manager in a quarterly budget review. Your team needs additional funding for a critical feature, but another department head is competing for the same budget allocation.",
+        "characters": [
+          {"name": "You", "role": "Project Manager advocating for your team"},
+          {"name": "Sarah", "role": "Marketing Director competing for the same budget"},
+          {"name": "David", "role": "CFO who will make the final decision"}
+        ],
+        "objective": "Negotiate a fair budget allocation that addresses both teams' core needs while maintaining a collaborative relationship with Sarah.",
+        "challenge": "Balancing assertiveness for your team's needs with empathy for Sarah's legitimate concerns, while presenting a compelling case to David."
+      }
+    }
+  },
+  "tag_taxonomies": {
+    "competency": {
+      "description": "CASEL Social-Emotional Learning competencies",
+      "values": [
+        "Self-Awareness",
+        "Self-Management",
+        "Social Awareness",
+        "Relationship Skills",
+        "Responsible Decision-Making"
+      ]
+    },
+    "skill": {
+      "description": "Specific actionable social skills",
+      "values": [
+        "Identifying emotions",
+        "Recognizing strengths",
+        "Growth mindset",
+        "Self-efficacy",
+        "Examining bias",
+        "Sense of purpose",
+        "Emotion regulation",
+        "Impulse control",
+        "Stress management",
+        "Self-discipline and motivation",
+        "Perseverance",
+        "Goal-setting",
+        "Organizational skills",
+        "Initiative and Agency",
+        "Perspective-taking",
+        "Empathy and compassion",
+        "Expressing gratitude",
+        "Appreciating diversity",
+        "Identifying social norms and demands",
+        "Sense of belonging",
+        "Communication",
+        "Cultural competence",
+        "Building relationships",
+        "Teamwork and working cooperatively",
+        "Resolving conflicts",
+        "Helping and Seeking help",
+        "Leadership",
+        "Standing up for the rights of others",
+        "Demonstrating curiosity and open-mindedness",
+        "Identifying and solving problems",
+        "Analyzing situations and consequences",
+        "Ethical responsibility",
+        "Reflecting on one's role to promote well-being"
+      ]
+    },
+    "context": {
+      "description": "Scenario contextual categories",
+      "values": {
+        "Workplace": ["Office", "Meeting", "Interview", "Professional collaboration"],
+        "Family": ["Parent-child", "Siblings", "Spouse", "Home interactions"],
+        "Friendship": ["Casual talk", "Emotional bonding", "Social events"],
+        "Romantic": ["Dating", "Partner conflict", "Relationship management"],
+        "Education": ["Classroom", "Peer discussion", "Teacher-student"],
+        "Public/Stranger": ["Store", "Transport", "Unknown people", "Park"],
+        "Party/Social": ["Events", "Birthdays", "Social mingling"]
+      }
+    }
+  }
+}

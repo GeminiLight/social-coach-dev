@@ -1,0 +1,19 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Local agent/session state
+.cc-branch/
+
+# The manuscript is published from its own repository.
+paper/
+
+# Downloaded source texts and run logs are local artifacts.
+data/books_content/
+download_log.txt
+
+# Local paper exports kept outside the paper repository.
+kdd_2026___social_coach*.pdf

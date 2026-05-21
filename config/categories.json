@@ -1,0 +1,56 @@
+{
+  "categories": [
+    {
+      "name": "Emotional Intelligence",
+      "keywords": ["emotional intelligence", "EQ", "emotions management"],
+      "subjects": ["emotional_intelligence", "emotions"]
+    },
+    {
+      "name": "Leadership",
+      "keywords": ["leadership", "leading people", "leadership skills"],
+      "subjects": ["leadership", "management"]
+    },
+    {
+      "name": "Communication",
+      "keywords": ["communication skills", "effective communication", "interpersonal communication"],
+      "subjects": ["communication", "interpersonal_relations"]
+    },
+    {
+      "name": "Negotiation",
+      "keywords": ["negotiation", "persuasion", "influence"],
+      "subjects": ["negotiation", "persuasion"]
+    },
+    {
+      "name": "Conflict Resolution",
+      "keywords": ["conflict resolution", "conflict management", "nonviolent communication"],
+      "subjects": ["conflict_management", "mediation"]
+    },
+    {
+      "name": "Empathy",
+      "keywords": ["empathy", "compassion", "understanding others"],
+      "subjects": ["empathy", "compassion"]
+    },
+    {
+      "name": "Relationships",
+      "keywords": ["relationships", "interpersonal relationships", "social bonds"],
+      "subjects": ["interpersonal_relations", "relationships"]
+    },
+    {
+      "name": "Self-Awareness",
+      "keywords": ["self-awareness", "self-knowledge", "personal growth"],
+      "subjects": ["self-awareness", "self-help"]
+    },
+    {
+      "name": "Social Intelligence",
+      "keywords": ["social intelligence", "social skills", "people skills"],
+      "subjects": ["social_intelligence", "social_skills"]
+    },
+    {
+      "name": "Self-Management",
+      "keywords": ["self-management", "self-discipline", "stress management", "resilience"],
+      "subjects": ["self-management", "stress_management"]
+    }
+  ],
+  "target_total_books": 200,
+  "books_per_category": 30
+}
