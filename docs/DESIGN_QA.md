@@ -34,6 +34,11 @@ Research project page for a technical AI/education audience. The visual system u
    - Re-rendered PDF figures at high DPI, cropped whitespace, and converted all page images to WebP.
    - Rechecked desktop and mobile hero layout after the longer academic title.
 
+7. Academic title readability update
+   - Changed the hero structure so the paper title and author list span the page before the content/product split.
+   - Removed the narrow-column title treatment that caused excessive line breaks.
+   - Verified desktop and mobile screenshots: no horizontal overflow, no clipped buttons, and the title remains quickly scannable.
+
 ## Verification Evidence
 
 - Desktop viewport: 1440 x 1100.
