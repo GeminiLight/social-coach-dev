@@ -261,8 +261,6 @@ h3 {
 .hero-subtitle,
 .paper-authors,
 .section-header p,
-.two-column p,
-.sticky-copy p,
 .resource-card p {
   margin: 0;
   max-width: 66ch;
@@ -498,16 +496,11 @@ button:focus-visible {
   padding: clamp(42px, 6vw, 72px) 0;
 }
 
-.two-column,
 .split-layout {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   gap: clamp(28px, 6vw, 72px);
   align-items: start;
-}
-
-.two-column h2 {
-  margin-top: 14px;
 }
 
 .section-header {
@@ -518,7 +511,21 @@ button:focus-visible {
 }
 
 .section-header h2 {
-  max-width: 15ch;
+  max-width: 20ch;
+}
+
+.section-header-centered {
+  justify-items: center;
+  max-width: 980px;
+  margin-right: auto;
+  margin-left: auto;
+  text-align: center;
+}
+
+.section-header-centered h2,
+.section-header-centered p {
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .framework-panel {
@@ -572,15 +579,9 @@ figcaption,
   border-top: 1px solid var(--line);
 }
 
-.sticky-copy {
-  position: sticky;
-  top: 104px;
+.knowledge-stats {
   display: grid;
   gap: 20px;
-}
-
-.sticky-copy h2 {
-  max-width: 12ch;
 }
 
 .plain-list {
@@ -821,7 +822,6 @@ pre {
 
   .hero,
   .hero-body,
-  .two-column,
   .split-layout,
   .resource-card {
     grid-template-columns: 1fr;
@@ -835,10 +835,6 @@ pre {
   .method-grid,
   .results-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .sticky-copy {
-    position: static;
   }
 
   .resource-actions {

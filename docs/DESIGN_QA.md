@@ -39,6 +39,11 @@ Research project page for a technical AI/education audience. The visual system u
    - Removed the narrow-column title treatment that caused excessive line breaks.
    - Verified desktop and mobile screenshots: no horizontal overflow, no clipped buttons, and the title remains quickly scannable.
 
+8. Full-width section heading update
+   - Changed major section titles to full-width centered headers before their content blocks.
+   - Applied the same treatment to Research contribution, Method, Knowledge corpus, and Evidence.
+   - Verified the headings are centered on desktop and mobile instead of being constrained by two-column content layouts.
+
 ## Verification Evidence
 
 - Desktop viewport: 1440 x 1100.
