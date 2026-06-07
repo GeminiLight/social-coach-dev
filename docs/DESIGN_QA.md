@@ -28,6 +28,12 @@ Research project page for a technical AI/education audience. The visual system u
    - Added canonical, Open Graph, Twitter Card, citation metadata, JSON-LD, sitemap, robots.txt, manifest, and llms.txt.
    - Verified local HTTP serving, PDF response, image loading, no horizontal overflow, visible next section, and unclipped buttons with Playwright.
 
+6. arXiv header and asset quality update
+   - Replaced the conference-style eyebrow with `arXiv preprint`.
+   - Added the full paper title and author list at the start of the hero.
+   - Re-rendered PDF figures at high DPI, cropped whitespace, and converted all page images to WebP.
+   - Rechecked desktop and mobile hero layout after the longer academic title.
+
 ## Verification Evidence
 
 - Desktop viewport: 1440 x 1100.
