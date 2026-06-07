@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://geminilight.github.io/social-coach-dev/sitemap.xml
+Sitemap: https://tianfuwang.tech/social-coach-dev/sitemap.xml

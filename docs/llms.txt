@@ -2,8 +2,8 @@
 
 > SocialCoach is a research project on personalized social skill learning with RL-based agentic tutoring and practice.
 
-Canonical URL: https://geminilight.github.io/social-coach-dev/
-Paper PDF: https://geminilight.github.io/social-coach-dev/assets/socialcoach-paper.pdf
+Canonical URL: https://tianfuwang.tech/social-coach-dev/
+Paper PDF: https://tianfuwang.tech/social-coach-dev/assets/socialcoach-paper.pdf
 Code repository: https://github.com/GeminiLight/social-coach-dev
 Conference: KDD 2026
 
