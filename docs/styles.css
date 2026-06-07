@@ -391,9 +391,16 @@ button:focus-visible {
 }
 
 .hero-metrics div {
+  display: grid;
+  place-items: center;
+  text-align: center;
   min-height: 112px;
   border-radius: var(--radius-sm);
   padding: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.68)),
+    radial-gradient(circle at 50% 0%, rgba(0, 143, 139, 0.12), transparent 64%);
+  box-shadow: 0 18px 48px rgba(28, 33, 38, 0.12);
 }
 
 .hero-metrics dt {
@@ -607,6 +614,27 @@ figcaption,
 
 .knowledge-layout .plain-list {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.knowledge-layout .plain-list li {
+  display: grid;
+  min-height: 94px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.62)),
+    radial-gradient(circle at 50% 0%, rgba(0, 143, 139, 0.1), transparent 60%);
+  box-shadow: 0 16px 42px rgba(28, 33, 38, 0.1);
+  padding: 18px 16px;
+  text-align: center;
+}
+
+.knowledge-layout .plain-list strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1;
 }
 
 .knowledge-layout .artifact-stack {
