@@ -245,6 +245,14 @@ h1 {
   text-wrap: balance;
 }
 
+.title-brand {
+  color: var(--accent-deep);
+  background: linear-gradient(100deg, #006c69 0%, #00a79f 42%, #253a76 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 h2 {
   margin: 0;
   max-width: 14ch;
