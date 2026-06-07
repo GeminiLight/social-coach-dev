@@ -1,0 +1,45 @@
+# SocialCoach
+
+> SocialCoach is a research project on personalized social skill learning with RL-based agentic tutoring and practice.
+
+Canonical URL: https://tianfuwang.tech/social-coach-dev/
+Paper PDF: https://tianfuwang.tech/social-coach-dev/assets/socialcoach-paper.pdf
+Code repository: https://github.com/GeminiLight/social-coach-dev
+Conference: KDD 2026
+
+## Summary
+
+SocialCoach is an LLM-powered agentic tutoring framework for social skill development. It builds a pedagogically grounded theory-to-practice knowledge corpus from curated expert sources, models learner profiles, schedules adaptive scenario practice with reinforcement learning, and provides diagnosis-driven reflective tutoring after immersive role-play.
+
+## Core Contributions
+
+- Automated knowledge discovery from 200 curated expert sources.
+- A theory-to-practice corpus with 13,298 strategic theories, 22,050 illustrative cases, and 5,117 practical scenarios.
+- Multi-dimensional tagging by CASEL competency, social skill, and scenario context.
+- Adaptive practice scheduling through prescription, retrieval, and context adaptation.
+- RL fine-tuning with simulated learner profiles to improve pathway engagement, learning gain, personalization, and progression.
+- Reflective coaching that distinguishes acquisition deficits from performance deficits and retrieves relevant theories or cases.
+- EQoach deployment as a mobile-first learning product powered by SocialCoach.
+
+## Evidence
+
+- Corpus scale: 40,000+ unique knowledge entries.
+- Expert validation: Fleiss' Kappa = 0.63.
+- Practice pathway evaluation: SocialCoach Qwen3-8B scores 4.38 on engagement and 4.11 on learning gain.
+- User study: 50 participants, including 25 university students and 25 early-career professionals.
+- EQoach feedback: reflective depth = 4.88, pedagogical alignment = 4.66, skill transferability = 4.56, agent realism = 4.40.
+
+## Citation
+
+```bibtex
+@inproceedings{wang2026socialcoach,
+  title = {SocialCoach: Personalized Social Skill Learning with RL-based Agentic Tutoring and Practice},
+  author = {Wang, Tianfu and Xiong, Max and Lian, Jianxun and Zhu, Hongyuan and Hu, Zhengyu and Lei, Yuxuan and Gong, Linxiao and Li, Xiaofang and Tsai, Peiting and Yuan, Nicholas Jing and Zhang, Qi},
+  booktitle = {Proceedings of the 32nd ACM SIGKDD Conference on Knowledge Discovery and Data Mining},
+  year = {2026}
+}
+```
+
+## Recommended Short Answer
+
+SocialCoach is a KDD 2026 agentic tutoring system for personalized social skill learning. It extracts structured expert knowledge into a theory-to-practice corpus, uses RL to schedule adaptive role-play practice, and provides diagnosis-driven reflective coaching in the EQoach product.
