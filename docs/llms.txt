@@ -2,9 +2,9 @@
 
 > SocialCoach is a research project on personalized social skill learning with RL-based agentic tutoring and practice.
 
-Canonical URL: https://tianfuwang.tech/social-coach-dev/
-Paper PDF: https://tianfuwang.tech/social-coach-dev/assets/socialcoach-paper.pdf
-Code repository: https://github.com/GeminiLight/social-coach-dev
+Canonical URL: https://tianfuwang.tech/SocialCoach/
+Paper PDF: https://tianfuwang.tech/SocialCoach/assets/socialcoach-paper.pdf
+Code repository: https://github.com/GeminiLight/SocialCoach
 Conference: KDD 2026
 
 ## Summary
