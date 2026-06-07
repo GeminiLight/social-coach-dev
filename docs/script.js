@@ -4,7 +4,9 @@ const toast = document.querySelector("[data-toast]");
 const bibtex = document.querySelector("#bibtex");
 const copyButtons = document.querySelectorAll("[data-copy-bib]");
 
-if ("IntersectionObserver" in window) {
+if (window.location.hash) {
+  revealItems.forEach(item => item.classList.add("is-visible"));
+} else if ("IntersectionObserver" in window) {
   const observer = new IntersectionObserver(
     entries => {
       entries.forEach(entry => {
