@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://geminilight.github.io/social-coach-dev/sitemap.xml

@@ -44,6 +44,16 @@ data/
 
 The manuscript is maintained separately in the `social-coach-paper` repository. Raw downloaded book texts and run logs are intentionally kept local and are not committed to the public development repository.
 
+## Project Page
+
+The polished paper homepage is in `docs/` and can be served directly by GitHub Pages. It includes the static HTML/CSS/JS site, paper PDF, visual assets, citation metadata, structured data, `sitemap.xml`, `robots.txt`, and `llms.txt` for SEO/GEO.
+
+Local preview:
+
+```bash
+python3 -m http.server 4173 --directory docs
+```
+
 ## Usage
 
 ```bash
