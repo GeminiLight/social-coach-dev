@@ -1,0 +1,17 @@
+\section{Related Work}
+Agentic Consensus draws on multiple threads that each address a facet of the representation gap.
+
+\textbf{Structural Representations for Code.}
+Literate programming reframes programs as explanations with executable substructure \cite{knuth1984}. Executable Knowledge Graphs (xKG) extend this by pairing conceptual nodes with runnable code snippets, enabling verifiable replication \cite{luo2025xkg}.
+Software modeling (UML-style diagrams) recognizes that engineers reason over graphs, but views are typically illustrative, not synchronized.
+Documentation practices (from architecture decision records to doc-as-code pipelines) attempt to preserve design rationale alongside artifacts, but remain passive secondary records: they decay as code evolves, are not bidirectionally linked to implementation, and cannot be operated on by agents.
+Our proposal requires bidirectional consistency between views and artifacts \cite{czarnecki2009bidirectional}. Recent structural-LLM work (code property graphs bridged to frozen LLMs \cite{yamaguchi2014cpg,chen2025cgbridge} and typed code DAGs \cite{chivukula2025agint}) demonstrates that explicit graph representations improve semantic fidelity at the code level. Agentic Consensus lifts this idea to the full project state $(I,C,A,E)$, adding evidence linkage and uncertainty tracking.
+
+\textbf{Trust in Agentic Software Engineering.}
+Formal methods show that explicit state models support scalable assurance \cite{clarke1999}; the SAFE-AI framework layers safety, auditability, and explainability practices for LLM-assisted SE \cite{navneet2025safeai}.
+AIDev's large-scale dataset of 456{,}000 agent-produced PRs reveals that agent changes are accepted significantly less often than human ones \cite{li2025aidev}, and agentic refactoring concentrates on low-level edits rather than structural design changes \cite{horikawa2025refactoring}; this is the trust--utility gap a governable consensus layer targets \cite{lee2004trust}.
+Coordination failures between agents mirror classic software risk \cite{brooks1975}. Recent multi-agent SE frameworks establish specialized roles and iterative refinement \cite{hong2024metagpt,qian2024chatdev,bandara2025agentsway,guo2025agentsesurvey}, but maintain consistency via message protocols rather than shared structure.
+
+\textbf{Human--AI Coding Benchmarks.}
+SWE-bench \cite{jimenez2024swebench} focuses on single-PR fixes and underestimates realistic complexity. FeatureBench exposes a major gap (11\% on multi-commit features vs.\ 74\% on SWE-bench \cite{zhou2026featurebench}), motivating evaluation beyond pass@$k$.
+HAI-Eval introduces ``Collaboration-Necessary'' tasks and measures human--AI synergy across intervention levels \cite{luo2025haieval}, directly compatible with our intervention-distance and cognitive-load metrics.

@@ -1,0 +1,188 @@
+
+\section{Agentic Consensus: The Case for a Primary Engineering Artifact}
+
+Human control over AI-generated systems requires a primary artifact that encodes structural commitments. Code encodes only execution; the consensus layer $C$ fills this gap.
+
+\subsection{Structural Artifact Foundations}
+
+\subsubsection{$C$ as the Coordinating Artifact}
+We model a project state as a tuple $(I, C, A, E)$:
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+  \item $I$: user intent, potentially partial, implicit, and time-varying,
+  \item $C$: a structured consensus layer (schema, graph, views),
+  \item $A$: realized artifacts that execute in the world (code, configs, dataflows), and
+  \item $E$: evidence linked to claims in $C$ (tests, traces, provenance).
+\end{itemize}
+Although the four components are defined together, they are not peers: $C$ is the management layer through which the other three become coherent.
+$I$ enters the system through propose/clarify operations that encode intent into structural claims within $C$.
+$A$ is derived from $C$ via the realization operator $\Phi$; without $C$, code exists but lacks an auditable rationale.
+$E$ attaches to claims in $C$ as validation signals; without $C$, test results are disconnected observations rather than evidence for or against specific commitments.
+In short, without $C$ the remaining components are individually meaningful but collectively uncoordinated and unauditable.
+
+\subsubsection{$C$ as an Auditable Graph}
+The consensus layer is not a single diagram; it is a typed, queryable schema with multiple synchronized projections.
+In practice, $C$ is a labeled property graph whose nodes represent modules, interfaces, data entities, and invariants; edges represent dependencies, contracts, and temporal relations.
+
+%% \begin{figure*}[t]
+%%   \centering
+%%   \begin{tikzpicture}[
+%%     node distance=6mm and 18mm,
+%%     nd-human/.style={
+%%       draw=black!70, fill=black!6, rounded corners=4pt,
+%%       inner sep=6pt, align=center, font=\small,
+%%       minimum width=32mm, minimum height=10mm
+%%     },
+%%     nd-center/.style={
+%%       draw=black!85, fill=black!14, rounded corners=4pt,
+%%       inner sep=7pt, align=center, font=\small\bfseries,
+%%       minimum width=46mm, minimum height=14mm, thick
+%%     },
+%%     nd-artifact/.style={
+%%       draw=black!70, fill=black!6, rounded corners=4pt,
+%%       inner sep=6pt, align=center, font=\small,
+%%       minimum width=32mm, minimum height=10mm
+%%     },
+%%     nd-evidence/.style={
+%%       draw=black!55, fill=black!3, rounded corners=3pt,
+%%       inner sep=5pt, align=center, font=\footnotesize,
+%%       minimum width=32mm, minimum height=9mm, dashed
+%%     },
+%%     nd-views/.style={
+%%       draw=black!55, fill=black!3, rounded corners=3pt,
+%%       inner sep=5pt, align=center, font=\footnotesize,
+%%       minimum width=46mm, minimum height=9mm, dashed
+%%     },
+%%     ar-main/.style={-{Latex[length=2.5mm, width=2mm]}, thick},
+%%     ar-back/.style={-{Latex[length=2.5mm, width=2mm]}, thick, dashed},
+%%     ar-evid/.style={-{Latex[length=2mm, width=1.5mm]}, thin, draw=black!50},
+%%     nd-lbl/.style={font=\footnotesize, inner sep=2pt, fill=white}
+%%   ]
+%%
+%%   %% ── Row 1: Intent | Consensus Layer | Artifacts ──
+%%   \node[nd-human]    (intent)
+%%         {Intent $I$\\\footnotesize{(natural language, pointing)}};
+%%   \node[nd-center, right=of intent] (C)
+%%         {Consensus Layer $C$\\\normalfont\footnotesize{typed property graph,}\\
+%%          \footnotesize{schema + synchronized views}};
+%%   \node[nd-artifact, right=of C] (artifacts)
+%%         {Artifacts $A$\\\footnotesize{code, configs, dataflows}};
+%%
+%%   %% ── Row 2: Views under C | Evidence under A ──
+%%   \node[nd-views, below=of C] (views)
+%%         {Multi-modal projections\\\footnotesize{topology, lineage, experiments,}\\
+%%          \footnotesize{contracts, causal paths}};
+%%   \node[nd-evidence, below=of artifacts] (evidence)
+%%         {Evidence $E$\\\footnotesize{tests, checks, traces, provenance}};
+%%
+%%   %% ── Main horizontal arrows ──
+%%   \draw[ar-main] (intent) -- node[nd-lbl, above]{propose / clarify} (C);
+%%   \draw[ar-main] (C)      -- node[nd-lbl, above]{$\Phi$\;{\normalfont\footnotesize realize}} (artifacts);
+%%   \draw[ar-back] (artifacts) to [bend left=28]
+%%                  node[nd-lbl, below]{$\Psi$\;{\normalfont\footnotesize rehydrate}} (C);
+%%
+%%   %% ── Vertical arrows ──
+%%   \draw[ar-evid] (C)         -- (views);
+%%   \draw[ar-evid] (artifacts) -- (evidence);
+%%   \draw[ar-evid] (evidence.west) to [bend right=20]
+%%                  node[nd-lbl, left]{\footnotesize link} (C.south east);
+%%
+%%   %% ── Human review feedback loop ──
+%%   \draw[ar-back] (C.north west) to [bend left=35]
+%%                  node[nd-lbl, above]{\footnotesize review / commit / rollback} (intent.north east);
+%%
+%%   %% ── Dashed boundary around C + views (the "Consensus Zone") ──
+%%   \node[draw=black!55, dashed, rounded corners=6pt,
+%%         fit=(C)(views), inner sep=8pt,
+%%         label={[font=\footnotesize, text=black!60]above right:Consensus Zone}] {};
+%%
+%%   %% ── Distinguishing annotation ──
+%%   \node[font=\footnotesize, text=black!60, align=left,
+%%         below=5mm of views, xshift=16mm]
+%%         {\textit{Differs from UML / notebooks:}\quad
+%%          (i)~round-trip $\Phi$/$\Psi$ operators\quad
+%%          (ii)~evidence-linked claims\quad
+%%          (iii)~entropy-driven clarification};
+%%
+%%   \end{tikzpicture}
+%%   \caption{%
+%%     Architecture of Agentic Consensus.
+%%     The consensus layer $C$ (bold center) is the primary artifact;
+%%     executable artifacts $A$ are derived via $\Phi$ (realize) and
+%%     kept in round-trip correspondence via $\Psi$ (rehydrate).
+%%     Evidence $E$ links directly to structural claims in $C$, making every
+%%     commitment auditable.
+%%     Humans review and commit at the level of $C$, not raw diffs.%
+%%   }
+%%   \label{fig:canvas}
+%% \end{figure*}
+
+\begin{figure*}[t]
+  \centering
+  % \includegraphics[width=\textwidth]{figures/figure-cases.pdf}
+  \includegraphics[width=0.90\textwidth]{figures/figure-cases.pdf}
+  \caption{Two case studies contrasting vibe coding (left sub-panels) with Agentic Consensus (right sub-panels). \textbf{Case~1} (left): an ML training pipeline's silent AUC degradation---vibe coding produces scattered, context-free debugging sessions, while $C$ maintains pipeline lineage and resolves the root cause (a feature window drift in PR~\#847) within hours. \textbf{Case~2} (right): an A/B experiment with hidden feature leakage---vibe coding approves a statistically significant but causally invalid lift, while $C$'s causal DAG enforces a feature parity contract that blocks rollout before inference begins.}
+  \label{fig:democases}
+  \vspace{-16pt}
+\end{figure*}
+
+Evidence is not a passive record; it is a first-class attribute of the graph, linked directly to claims in $C$.
+For example, an edge ``dataset $D$ conforms to schema $S$'' should have pointers to validation jobs and their timestamps.
+This auditability requires a precise correspondence between graph elements and artifacts:
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+  \item \textit{Structural mapping:} nodes map to code units (packages, classes, functions), configuration blocks, or dataset definitions.
+  \item \textit{Behavioral mapping:} edges map to explicit call sites, API contracts, data lineage, or testable invariants.
+  \item \textit{Round-trip integrity:} changes in $C$ compile down to edits in $A$; changes in $A$ rehydrate back into $C$ via static analysis, runtime traces, and provenance logs.
+\end{itemize}
+
+\subsubsection{$C$ as an Operable Sandbox}
+$C$ is where agents reason about structure: manipulating dependencies, running analyses, and evaluating counterfactuals without modifying artifacts.
+
+For instance, the system should answer questions of the form:
+\begin{quote}
+If I delete this node in the consensus graph, which dependencies will break in the downstream code?
+\end{quote}
+
+Operationally, this requires that $C$ encodes enough dependency information (and links to evidence) to support ``what-if'' queries and rollback-safe planning.
+If the answer depends on unknown or implicit dependencies, that ambiguity should appear as increased consensus entropy rather than as a silent guess.
+$C$ also supports context-aware view synthesis: task-relevant subgraphs are projected on demand rather than exposing full topology, keeping $C$ cognitively tractable at scale.
+
+\subsection{Round-Trip Synchronization Requirements}
+Structural commitments in $C$ are useful only if they stay in correspondence with artifacts. This requires synchronization to be a first-class system property, not an optional documentation step.
+
+\subsubsection{Synchronization as a First-Class Property}
+A session alternates between consensus moves (proposing or modifying $C$) and realization moves (editing $A$ and rehydrating back into $C$). Synchronization operators couple these moves, preserving round-trip integrity and updating evidence links.
+We posit two principal operators:
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+  \item $\Phi: (C, A) \rightarrow A'$ \quad (\emph{realize}): given the current artifact baseline $A$, compile a proposed consensus change into incremental diffs.
+  \item $\Psi: (A, C) \rightarrow C'$ \quad (\emph{rehydrate}): infer/update consensus structure from observed artifact diffs.
+\end{itemize}
+In practice, $\Psi$ is implemented via static analysis (e.g., AST) \cite{yamaguchi2014cpg}, dynamic invariant detection \cite{ernst2007daikon}, data lineage/provenance, and test results. These operators must run continuously, not as on-demand documentation scripts.
+
+\subsubsection{Round-Trip Consistency as a Monitored Approximation}
+Ideally, $\Psi(\Phi(C, A)) \approx C$: realizing a consensus change and rehydrating the result should recover the original structure.
+In practice, strict equality is unattainable because $\Phi$ may discard structural information that has no artifact-level counterpart, and $\Psi$ is underdetermined.
+We therefore treat round-trip consistency as a \emph{soft invariant}: the system continuously measures structural drift $d(C, \Psi(\Phi(C,A)))$ and flags divergence above a threshold, rather than demanding exact isomorphism.
+This relaxation is essential for incremental adoption: partial consensus layers provide value before full round-trip fidelity.
+
+When ambiguous, $\Psi$ produces ranked candidate deltas; the system runs cheap discriminating checks (type/schema checks, unit tests, static analyses) and escalates to human input when uncertainty remains high, increasing $\mathcal{H}(C\mid I)$ rather than making a silent guess. Tuning this threshold remains open, as it must balance the cost of interrupting the developer against the risk of silently misattributing intent. 
+
+\subsubsection{Human-Gated Review as a Control Surface}
+Every proposed $\Delta C$ arrives with predicted $\Delta A$ and attached evidence; the human decision is gated on structure, not code.
+The critical operation is commit/rollback: $\Delta A$ is available for audit and trust calibration but is not the primary review surface.
+
+\subsection{Autonomous Agentic Orchestration}
+No single model can maintain $C$ reliably across the full scope of a project. Specialization is necessary: different agents must own different responsibilities over $C$, and their coordination must itself be mediated through $C$ rather than through opaque message exchange.
+
+\subsubsection{Coordinated Multi-Agent Pipelines}
+We propose a coordinated pipeline of specialized agents that operate over $C$ and $A$.
+This decomposition is informed by emerging multi-agent software-development systems, while shifting the locus of control to a governable consensus artifact $C$ \cite{hong2024metagpt,qian2024chatdev,li2025aidev,wang2025genmentor}.
+A representative decomposition uses four roles: an Architect translates intent into structure; a Builder implements artifacts; an Auditor generates evidence and detects conflicts; a Navigator projects the slice of $C$ relevant to the current task. Each agent operates over $C$ as the shared coordination surface rather than through message exchange alone.
+Commit/Rollback remains a human decision in all cases.
+
+\subsubsection{Agent--Agent Consensus}
+Agents negotiate using richer internal representations, but every outcome is projected back into $C$ before commitment. Conflicts surface as competing $\Delta C$ alternatives with natural-language rationale, highlighted affected paths, and predicted test outcomes; humans commit or reject.
+
+\subsubsection{Expert-Guided Evolution}
+Agents that mine interaction traces to discover structural patterns can progressively reduce human intervention distance. 
+If recurring corrections cluster around predictable missing relations, the system learns to make those relations first-class in $C$.
+This transforms $C$ from a static record into a living knowledge base that grows more accurate as the project evolves and human feedback accumulates.

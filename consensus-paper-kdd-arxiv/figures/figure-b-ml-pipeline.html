@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Figure B — ML Training Pipeline</title>
+<style>
+:root {
+  --ink: #1f2937; --body: #374151; --secondary: #6b7280; --muted: #9ca3af;
+  --rule: #d1d5db; --light-rule: #e5e7eb;
+  --red: #b91c1c; --green: #15803d; --amber: #92400e; --blue: #1e40af; --purple: #6d28d9;
+  --bg: #ffffff; --code-bg: #1e293b; --code-text: #e2e8f0; --light-bg: #f8fafc;
+  --font-ui: 'Inter', 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Menlo', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { width:1440px; margin:0 auto; background:var(--bg); font-family:var(--font-ui); color:var(--ink); -webkit-font-smoothing:antialiased; }
+
+.fig-label { padding:14px 28px 10px; display:flex; align-items:baseline; justify-content:space-between; border-bottom:1.5px solid var(--ink); }
+.fig-id { font-size:22px; font-weight:700; } .fig-id em { font-style:normal; font-weight:400; color:var(--secondary); font-size:20px; margin-left:4px; }
+.fig-domain { font-size:14px; text-transform:uppercase; letter-spacing:0.1em; color:var(--secondary); font-weight:600; }
+
+.panels { display:grid; grid-template-columns:1fr 1fr; }
+.panel { padding:16px 28px 20px; }
+.panel-right { border-left:1px solid var(--rule); }
+.panel-title { font-size:16px; font-weight:700; color:var(--secondary); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:14px; padding-bottom:6px; border-bottom:1px solid var(--light-rule); }
+
+.code { background:var(--code-bg); border-radius:4px; padding:12px 16px; margin-bottom:14px; font-family:var(--font-mono); font-size:15px; line-height:1.7; color:var(--code-text); white-space:pre-wrap; }
+.code .kw { color:#c678dd; } .code .str { color:#98c379; } .code .fn { color:#61afef; } .code .num { color:#d19a66; } .code .cm { color:#636c7c; font-style:italic; }
+
+.chat { margin-bottom:14px; }
+.chat-line { font-size:17px; line-height:1.6; color:var(--body); margin-bottom:2px; }
+.chat-line .rl { font-weight:700; color:var(--ink); } .chat-line .rl-a { font-weight:600; color:var(--secondary); }
+.chat-line code { font-family:var(--font-mono); font-size:14px; background:#f1f5f9; padding:1px 4px; border-radius:2px; }
+.chat-round { font-size:14px; color:var(--muted); font-style:italic; margin:6px 0 2px; }
+
+.blind { margin-bottom:14px; }
+.blind-hd { font-size:14px; font-weight:700; color:var(--red); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; }
+.blind-item { font-size:16px; line-height:1.55; color:var(--body); padding-left:18px; position:relative; margin-bottom:3px; }
+.blind-item::before { content:''; position:absolute; left:2px; top:9px; width:6px; height:6px; border-radius:50%; background:var(--red); }
+.blind-item strong { font-weight:700; color:var(--ink); }
+.blind-item code { font-family:var(--font-mono); font-size:14px; background:#f1f5f9; padding:1px 4px; border-radius:2px; }
+
+.outcome { border-left:3px solid var(--rule); padding:8px 0 8px 14px; margin-top:10px; }
+.out-fail { border-left-color:var(--red); } .out-ok { border-left-color:var(--green); }
+.out-hd { font-size:15px; font-weight:700; margin-bottom:4px; }
+.out-hd-fail { color:var(--red); } .out-hd-ok { color:var(--green); }
+.out-row { font-size:15px; line-height:1.6; color:var(--body); display:flex; gap:10px; }
+.out-row .tm { font-family:var(--font-mono); font-weight:700; color:var(--muted); min-width:44px; flex-shrink:0; font-size:14px; }
+
+.graph-box { background:var(--light-bg); border:1px solid var(--rule); border-radius:4px; padding:10px 12px; margin-bottom:14px; }
+.graph-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
+.graph-title { font-size:17px; font-weight:700; } .graph-title em { font-style:italic; }
+.graph-sub { font-size:14px; color:var(--muted); font-family:var(--font-mono); margin-bottom:8px; }
+.entropy-tag { font-family:var(--font-mono); font-size:13px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.entropy-tag .bar { width:40px; height:4px; background:#e5e7eb; border-radius:2px; overflow:hidden; display:inline-block; }
+.entropy-tag .fill { display:block; height:100%; border-radius:2px; }
+.fill-high { width:85%; background:var(--red); } .lbl-high { font-weight:800; color:var(--red); }
+
+.callout { border-left:3px solid var(--amber); padding:8px 14px; margin-bottom:12px; background:#fffbeb; border-radius:0 4px 4px 0; }
+.callout-hd { font-size:15px; font-weight:700; color:var(--amber); margin-bottom:4px; }
+.callout-item { font-size:15px; color:var(--body); line-height:1.6; }
+.callout-item::before { content:"→ "; color:var(--amber); font-weight:700; }
+
+.evidence { margin-bottom:12px; }
+.ev-hd { font-size:14px; font-weight:700; color:var(--secondary); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; }
+.ev-row { display:flex; align-items:center; gap:8px; font-size:15px; font-family:var(--font-mono); color:var(--body); line-height:1.7; }
+.ev-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.ev-g { background:var(--green); } .ev-r { background:var(--red); }
+.ev-st { font-weight:700; margin-left:auto; white-space:nowrap; }
+.ev-st-g { color:var(--green); } .ev-st-r { color:var(--red); }
+</style>
+</head>
+<body>
+
+<div class="fig-label">
+  <div class="fig-id">Scenario B<em>— ML Training Pipeline: Silent Degradation</em></div>
+  <div class="fig-domain">Machine Learning</div>
+</div>
+
+<div class="panels">
+
+<!-- ════ LEFT ════ -->
+<div class="panel">
+  <div class="panel-title">(a) Vibe Coding</div>
+
+  <div class="code"><span class="cm"># rec-model training config</span>
+<span class="fn">model</span>:  <span class="str">deepfm</span>,  <span class="fn">lr</span>: <span class="num">0.001</span>
+<span class="fn">features</span>: [<span class="str">user_id</span>, <span class="str">item_id</span>, <span class="str">click_rate_7d</span>, <span class="str">user_activity</span>]
+<span class="fn">data</span>:  <span class="fn">snapshot</span>: <span class="str">latest</span>,  <span class="fn">split</span>: <span class="num">0.8</span></div>
+
+  <div class="chat">
+    <div class="chat-line"><span class="rl">User:</span> AUC dropped 2 points this week, investigate</div>
+    <div class="chat-round">Round 1</div>
+    <div class="chat-line"><span class="rl-a">Agent:</span> Might be learning rate. Try 0.0005.</div>
+    <div class="chat-line"><span class="rl">User:</span> No change</div>
+    <div class="chat-round">Round 2</div>
+    <div class="chat-line"><span class="rl-a">Agent:</span> Could be feature noise. Rolling back features.</div>
+    <div class="chat-line"><span class="rl">User:</span> No recovery</div>
+    <div class="chat-round">Round 3</div>
+    <div class="chat-line"><span class="rl-a">Agent:</span> Adding null check: <code>if row.click_rate is None: continue</code></div>
+  </div>
+
+  <div class="blind">
+    <div class="blind-hd">Blind Spots</div>
+    <div class="blind-item"><strong>Data snapshot</strong> — which version used last week? No versioning</div>
+    <div class="blind-item"><strong>Feature distribution</strong> — did <code>click_rate_7d</code> shift?</div>
+    <div class="blind-item"><strong>Hypothesis tracking</strong> — which guesses ruled out? Only in chat</div>
+  </div>
+
+  <div class="outcome out-fail">
+    <div class="out-hd out-hd-fail">Status</div>
+    <div class="out-row"><span class="tm">Day 1</span> Guess: learning rate — no improvement</div>
+    <div class="out-row"><span class="tm">Day 2</span> Guess: feature rollback — no improvement</div>
+    <div class="out-row"><span class="tm">Day 3</span> Guess: null check — no improvement</div>
+    <div class="out-row"><span class="tm">Day 4</span> Root cause unknown; 3 training cycles wasted</div>
+  </div>
+</div>
+
+<!-- ════ RIGHT ════ -->
+<div class="panel panel-right">
+  <div class="panel-title">(b) Agentic Consensus</div>
+
+  <div class="graph-box">
+    <div class="graph-header">
+      <div class="graph-title">Consensus Layer <em>C</em> — Competing Hypotheses</div>
+      <div class="entropy-tag">H(C|I) <span class="bar"><span class="fill fill-high"></span></span> <span class="lbl-high">HIGH</span></div>
+    </div>
+    <div class="graph-sub">pipeline lineage · hypotheses as first-class structure</div>
+
+    <svg width="100%" height="210" viewBox="0 0 660 210" fill="none">
+      <defs>
+        <marker id="a" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4" fill="#6b7280"/></marker>
+      </defs>
+
+      <!-- Pipeline lineage (shifted left to avoid right-edge clipping) -->
+      <rect x="5" y="2" width="100" height="26" rx="3" fill="white" stroke="#d1d5db"/>
+      <text x="55" y="19" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#1f2937" font-weight="600">data_snapshot</text>
+      <line x1="105" y1="15" x2="122" y2="15" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+
+      <rect x="126" y="2" width="110" height="26" rx="3" fill="white" stroke="#d1d5db"/>
+      <text x="181" y="19" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#1f2937" font-weight="600">feature_pipeline</text>
+      <line x1="236" y1="15" x2="253" y2="15" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+
+      <rect x="257" y="2" width="110" height="26" rx="3" fill="white" stroke="#d1d5db"/>
+      <text x="312" y="19" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#1f2937" font-weight="600">training_config</text>
+      <line x1="367" y1="15" x2="384" y2="15" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+
+      <rect x="388" y="2" width="62" height="26" rx="3" fill="white" stroke="#d1d5db"/>
+      <text x="419" y="19" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#1f2937" font-weight="600">model</text>
+      <line x1="450" y1="15" x2="467" y2="15" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+
+      <rect x="471" y="2" width="100" height="26" rx="3" fill="white" stroke="#b91c1c"/>
+      <rect x="471" y="2" width="4" height="26" fill="#b91c1c" rx="2"/>
+      <text x="521" y="19" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#1f2937" font-weight="600">eval_metrics</text>
+      <text x="590" y="19" font-family="JetBrains Mono, monospace" font-size="12" fill="#b91c1c" font-weight="700">↓ 2pts</text>
+
+      <!-- Separator -->
+      <line x1="0" y1="42" x2="660" y2="42" stroke="#e5e7eb" stroke-width="1" stroke-dasharray="5,4"/>
+      <text x="330" y="58" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#9ca3af" font-style="italic">Competing causal hypotheses</text>
+
+      <!-- Hyp A -->
+      <rect x="8" y="68" width="310" height="80" rx="4" fill="white" stroke="#b91c1c" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="22" y="86" font-family="Inter, sans-serif" font-size="14" fill="#b91c1c" font-weight="700">Hypothesis A: Data Shift</text>
+      <rect x="22" y="94" width="108" height="22" rx="3" fill="white" stroke="#d1d5db"/>
+      <text x="76" y="109" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#374151">snapshot_wk12</text>
+      <text x="138" y="109" font-family="Inter, sans-serif" font-size="12" fill="#b91c1c" font-weight="600">vs</text>
+      <rect x="153" y="94" width="108" height="22" rx="3" fill="white" stroke="#d1d5db"/>
+      <text x="207" y="109" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#374151">snapshot_wk11</text>
+      <text x="22" y="135" font-family="Inter, sans-serif" font-size="12" fill="#6b7280">user_activity rows: −15% (upstream timeout)</text>
+      <text x="22" y="145" font-family="JetBrains Mono, monospace" font-size="11" fill="#92400e" font-weight="700">needs: row count diff</text>
+
+      <!-- Hyp B -->
+      <rect x="330" y="68" width="320" height="80" rx="4" fill="white" stroke="#1e40af" stroke-width="1" stroke-dasharray="5,3"/>
+      <text x="344" y="86" font-family="Inter, sans-serif" font-size="14" fill="#1e40af" font-weight="700">Hypothesis B: Feature Drift</text>
+      <rect x="344" y="94" width="110" height="22" rx="3" fill="white" stroke="#92400e" stroke-width="1.5"/>
+      <text x="399" y="109" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#374151">click_rate_7d</text>
+      <text x="462" y="109" font-family="Inter, sans-serif" font-size="14" fill="#6b7280">→</text>
+      <rect x="476" y="94" width="110" height="22" rx="3" fill="white" stroke="#d1d5db"/>
+      <text x="531" y="109" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#374151">distrib. shift</text>
+      <text x="344" y="135" font-family="Inter, sans-serif" font-size="12" fill="#6b7280">window changed 7d→3d (PR side-effect)</text>
+      <text x="344" y="145" font-family="JetBrains Mono, monospace" font-size="11" fill="#92400e" font-weight="700">needs: drift test</text>
+
+      <!-- Operators -->
+      <line x1="0" y1="162" x2="660" y2="162" stroke="#e5e7eb" stroke-width="0.8"/>
+      <rect x="60" y="168" width="250" height="22" rx="3" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.8"/>
+      <text x="185" y="183" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#1e40af" font-weight="700">Φ realize: fix from surviving hyp</text>
+      <rect x="330" y="168" width="270" height="22" rx="3" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.8"/>
+      <text x="465" y="183" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#6d28d9" font-weight="700">Ψ rehydrate: update C with root cause</text>
+
+      <text x="330" y="205" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#15803d" font-weight="600">A eliminated (snapshot OK) → B confirmed (drift + git blame) → 2 targeted checks vs 3 blind guesses</text>
+    </svg>
+  </div>
+
+  <div class="callout">
+    <div class="callout-hd">Clarification (triggered by high entropy)</div>
+    <div class="callout-item">Confirm wk12 snapshot completeness (partition row counts)</div>
+    <div class="callout-item">Run drift test: click_rate_7d distribution wk11 vs wk12</div>
+  </div>
+
+  <div class="evidence">
+    <div class="ev-hd">Evidence E</div>
+    <div class="ev-row"><div class="ev-dot ev-g"></div> snapshot row count: wk12 complete <span class="ev-st ev-st-g">✓ Hyp A ruled out</span></div>
+    <div class="ev-row"><div class="ev-dot ev-r"></div> drift test: click_rate_7d <span class="ev-st ev-st-r">p &lt; 0.001 — SHIFTED</span></div>
+    <div class="ev-row"><div class="ev-dot ev-g"></div> git blame: window → PR #847 <span class="ev-st ev-st-g">✓ root cause</span></div>
+  </div>
+
+  <div class="outcome out-ok">
+    <div class="out-hd out-hd-ok">Resolution</div>
+    <div class="out-row"><span class="tm">Day 1</span> Two hypotheses surfaced; targeted evidence requested</div>
+    <div class="out-row"><span class="tm">Day 2</span> Hyp A eliminated, B confirmed (drift + git blame)</div>
+    <div class="out-row"><span class="tm">Day 2</span> Fix: revert click_rate window to 7d; AUC recovers</div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

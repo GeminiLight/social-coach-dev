@@ -1,0 +1,11 @@
+
+\section{Evaluation Framework}
+Evaluating Agentic Consensus requires moving beyond code correctness (pass@$k$) toward four complementary metrics that measure structure, uncertainty, and human control.
+\textit{(a) Alignment fidelity} $\mathcal{F}(I,C,A)$ increases when $C$ makes intent explicit at the right abstraction level and is predictive (reviewers can anticipate downstream consequences); it can be estimated via human annotations, counterfactual questions, and post-hoc blame assignment.
+\textit{(b) Consensus entropy} $\mathcal{H}(C\mid I)$ quantifies structural ambiguity given current intent; we use conditional-entropy notation as conceptual shorthand rather than a literal Shannon quantity. High $\mathcal{H}$ is not failure; it is a signal to switch from execution to clarification.
+\textit{(c) Intervention distance} counts the number and complexity of human corrections needed to reach a correct consensus state.
+\textit{(d) Cognitive load} measures whether humans understand systems faster by interacting with $C$ than by reading raw artifacts \cite{sweller1988cognitive,klein2005common,siemon2022taxonomy,lee2004trust}.
+
+\paragraph{\textbf{Benchmark design.}}
+We propose task families explicitly designed for consensus-based workflows: refactor-with-invariants (restructure while preserving contracts), failure localization (update $C$ with the true causal path), experiment design (represent and validate ablation plans in $C$), and governance tasks (implement policy changes where success requires correct structure, not just passing tests).
+FeatureBench's multi-commit tasks \cite{zhou2026featurebench} and HAI-Eval's collaboration-necessary protocol \cite{luo2025haieval} provide compatible task distributions and human-collaboration protocols for external validation.

@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Figure: Case Studies</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 1440px;
+  height: 680px;
+  overflow: hidden;
+  background: #ffffff;
+  font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+}
+
+/* ─── Root Layout ─── */
+.root {
+  display: grid;
+  grid-template-columns: 28px 1fr 1fr;
+  width: 1440px;
+  height: 680px;
+  border: 1px solid #d1d5db;
+}
+
+/* ─── Left label column ─── */
+.label-col {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #d1d5db;
+}
+.label-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.label-cell-vibe {
+  height: 311px;
+  background: #111827;
+  border-bottom: 1px solid #374151;
+}
+.label-cell-consensus {
+  height: 369px;
+  background: #f8fafc;
+}
+.label-text {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+}
+.label-text-vibe { color: #8b949e; }
+.label-text-consensus { color: #7c3aed; }
+
+/* ─── Column divider ─── */
+.col-l { border-right: 1px solid #d1d5db; }
+
+/* ─── Column header (case title bar) ─── */
+.case-header {
+  display: flex;
+  align-items: stretch;
+  height: 38px;
+  border-bottom: 1px solid #d1d5db;
+}
+.case-header-icon {
+  width: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #d1d5db;
+  font-size: 13px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+.case-header-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 14px;
+  gap: 1px;
+}
+.case-title {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #111827;
+  font-family: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+}
+.case-sub {
+  font-size: 10px;
+  color: #9ca3af;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  letter-spacing: 0.02em;
+}
+
+/* ─── Panel halves ─── */
+.panel {
+  overflow: hidden;
+  position: relative;
+}
+.panel-vibe {
+  height: 272px;
+  background: #0d1117;
+  border-bottom: 1px solid #21262d;
+}
+.panel-consensus {
+  height: 369px;
+  background: #f8fafc;
+  border-left: 3px solid #7c3aed;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── IDE chrome: tab bar ─── */
+.ide-tabbar {
+  display: flex;
+  align-items: stretch;
+  height: 28px;
+  background: #161b22;
+  border-bottom: 1px solid #21262d;
+}
+.ide-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 12px;
+  font-size: 10px;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  color: #8b949e;
+  border-right: 1px solid #21262d;
+  cursor: default;
+}
+.ide-tab.active {
+  background: #0d1117;
+  color: #e6edf3;
+  border-bottom: 1px solid #58a6ff;
+}
+.tab-dot { width: 6px; height: 6px; border-radius: 50%; background: #8b949e; }
+.tab-dot.modified { background: #f0883e; }
+
+/* ─── IDE body ─── */
+.ide-body {
+  padding: 0;
+  overflow: hidden;
+  height: calc(100% - 28px);
+  display: flex;
+}
+
+/* ─── Line numbers gutter ─── */
+.gutter {
+  width: 32px;
+  flex-shrink: 0;
+  background: #0d1117;
+  border-right: 1px solid #21262d;
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.ln {
+  height: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 8px;
+  font-size: 10px;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  color: #3d444d;
+  line-height: 1;
+}
+
+/* ─── Main editor / chat area ─── */
+.editor-main {
+  flex: 1;
+  padding: 8px 0;
+  overflow: hidden;
+  min-width: 0;
+}
+
+/* ─── Chat messages in IDE style ─── */
+.chat-msg {
+  height: 19px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 11px;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  line-height: 1;
+  white-space: nowrap;
+}
+.chat-msg.hover-hl { background: #161b22; }
+.msg-prefix {
+  display: inline;
+  font-weight: 600;
+  margin-right: 6px;
+}
+.prefix-user { color: #58a6ff; }
+.prefix-agent { color: #3fb950; }
+.prefix-sys   { color: #ff7b72; }
+.msg-text { color: #e6edf3; }
+.msg-muted { color: #8b949e; }
+.msg-err   { color: #ff7b72; font-weight: 600; }
+.msg-warn  { color: #f0883e; }
+.inline-red   { color: #ff7b72; }
+.inline-amber { color: #f0883e; }
+.inline-green { color: #3fb950; }
+
+/* ─── Terminal-style status bar at bottom of IDE ─── */
+.ide-statusbar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 18px;
+  background: #161b22;
+  border-top: 1px solid #21262d;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 12px;
+}
+.status-item {
+  font-size: 9px;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  color: #8b949e;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.status-err { color: #ff7b72; }
+.status-warn { color: #f0883e; }
+
+/* ─── Annotation sidebar (blind spots) ─── */
+.anno-sidebar {
+  width: 178px;
+  flex-shrink: 0;
+  background: #161b22;
+  border-left: 1px solid #21262d;
+  padding: 8px 0 0;
+  display: flex;
+  flex-direction: column;
+}
+.anno-header {
+  font-size: 9px;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  color: #f0883e;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 0 10px 6px;
+  border-bottom: 1px solid #21262d;
+}
+.anno-item {
+  padding: 7px 10px;
+  border-bottom: 1px solid #21262d;
+  font-size: 10px;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  color: #8b949e;
+  line-height: 1.35;
+}
+.anno-item::before {
+  content: "⚠ ";
+  color: #f0883e;
+  font-size: 9px;
+}
+
+/* ─── Pill tags ─── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  font-weight: 600;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.pill-red    { background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; }
+.pill-green  { background: #f5f3ff; color: #7c3aed; border: 1px solid #c4b5fd; }
+.pill-amber  { background: #fffbeb; color: #b45309; border: 1px solid #fcd34d; }
+.pill-gray   { background: #f3f4f6; color: #6b7280; border: 1px solid #d1d5db; }
+.pill-blue   { background: #eff6ff; color: #1d4ed8; border: 1px solid #93c5fd; }
+
+/* ─── Divider ruler between vibe and consensus ─── */
+.panel-ruler {
+  height: 1px;
+  background: #e2e8f0;
+  flex-shrink: 0;
+}
+
+/* ════════════════════════════
+   LINEAGE EXPLORER CHROME
+   ════════════════════════════ */
+
+/* Top toolbar */
+.lex-toolbar {
+  height: 28px;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 0;
+  flex-shrink: 0;
+}
+.lex-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  color: #64748b;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.lex-breadcrumb .crumb-root { color: #94a3b8; }
+.lex-breadcrumb .crumb-sep  { color: #cbd5e1; }
+.lex-breadcrumb .crumb-active { color: #1e293b; font-weight: 600; }
+.lex-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.lex-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 9px;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  color: #64748b;
+  cursor: default;
+}
+.lex-btn.btn-audit {
+  border-color: #dc2626;
+  background: #fef2f2;
+  color: #dc2626;
+  font-weight: 600;
+}
+.lex-btn.btn-audit-ok {
+  border-color: #c4b5fd;
+  background: #f5f3ff;
+  color: #7c3aed;
+  font-weight: 600;
+}
+
+/* Body: sidebar + main canvas */
+.lex-body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Left properties panel */
+.lex-sidebar {
+  width: 118px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.lex-sidebar-section {
+  border-bottom: 1px solid #f1f5f9;
+  padding: 6px 8px;
+}
+.lex-sidebar-heading {
+  font-size: 8.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+  margin-bottom: 5px;
+}
+.lex-prop-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin-bottom: 5px;
+}
+.lex-prop-key {
+  font-size: 8.5px;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  color: #94a3b8;
+}
+.lex-prop-val {
+  font-size: 9.5px;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  color: #1e293b;
+  font-weight: 500;
+}
+.lex-prop-val.val-red { color: #dc2626; }
+.lex-prop-val.val-green { color: #7c3aed; }
+.lex-prop-val.val-amber { color: #b45309; }
+
+/* Main graph canvas */
+.lex-canvas {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #f8fafc;
+  background-image:
+    radial-gradient(circle, #cbd5e1 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* Bottom status bar */
+.lex-statusbar {
+  height: 20px;
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.lex-status-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  color: #64748b;
+  white-space: nowrap;
+}
+.lex-status-item .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+}
+.dot-green { background: #7c3aed; }
+.dot-red   { background: #dc2626; }
+.dot-amber { background: #f59e0b; }
+.lex-status-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+</style>
+</head>
+<body>
+
+<div class="root">
+
+<!-- ════════════════════════════════════════ LABEL COLUMN -->
+<div class="label-col">
+  <div class="label-cell label-cell-vibe">
+    <span class="label-text label-text-vibe">① Vibe Coding</span>
+  </div>
+  <div class="label-cell label-cell-consensus">
+    <span class="label-text label-text-consensus">② Agentic Consensus</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ LEFT COLUMN: ML Pipeline -->
+<div class="col-l">
+
+  <!-- Case header -->
+  <div class="case-header">
+    <div class="case-header-icon">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <rect x="1" y="1" width="12" height="12" rx="2" stroke="#6b7280" stroke-width="1.2"/>
+        <path d="M4 5h6M4 7h4M4 9h5" stroke="#6b7280" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="case-header-text">
+      <span class="case-title">ML Training Pipeline</span>
+      <span class="case-sub">silent-degradation · auc-drop-2pt</span>
+    </div>
+  </div>
+
+  <!-- ① Vibe Coding panel -->
+  <div class="panel panel-vibe">
+    <div class="ide-tabbar">
+      <div class="ide-tab active">
+        <div class="tab-dot modified"></div>
+        debug_session.log
+      </div>
+      <div class="ide-tab">pipeline.py</div>
+      <div class="ide-tab">model_train.py</div>
+    </div>
+
+    <div class="ide-body" style="height: calc(100% - 28px - 18px);">
+      <div class="gutter">
+        <div class="ln">1</div>
+        <div class="ln">2</div>
+        <div class="ln">3</div>
+        <div class="ln">4</div>
+        <div class="ln">5</div>
+        <div class="ln">6</div>
+        <div class="ln">7</div>
+        <div class="ln" style="color:#ff7b72;">8</div>
+        <div class="ln" style="color:#ff7b72;">9</div>
+        <div class="ln" style="color:#ff7b72;">10</div>
+        <div class="ln">11</div>
+        <div class="ln">12</div>
+      </div>
+      <div class="editor-main">
+        <div class="chat-msg">
+          <span class="msg-prefix prefix-user">user</span>
+          <span class="msg-text">AUC dropped 2 pts overnight — investigate</span>
+        </div>
+        <div class="chat-msg hover-hl">
+          <span class="msg-prefix prefix-agent">agent</span>
+          <span class="msg-text">Likely learning rate. Try lr=0.0005 and retrain</span>
+        </div>
+        <div class="chat-msg">
+          <span class="msg-prefix prefix-user">user</span>
+          <span class="msg-text">Retrained. No change in AUC</span>
+        </div>
+        <div class="chat-msg hover-hl">
+          <span class="msg-prefix prefix-agent">agent</span>
+          <span class="msg-text">Roll back feature additions from last week</span>
+        </div>
+        <div class="chat-msg">
+          <span class="msg-prefix prefix-user">user</span>
+          <span class="msg-text">Rolled back. AUC still degraded</span>
+        </div>
+        <div class="chat-msg hover-hl">
+          <span class="msg-prefix prefix-agent">agent</span>
+          <span class="msg-text">Check for null values in input pipeline</span>
+        </div>
+        <div class="chat-msg">
+          <span class="msg-prefix prefix-user">user</span>
+          <span class="msg-text">No nulls found</span>
+        </div>
+        <div class="chat-msg hover-hl" style="background:#1a0505;">
+          <span class="msg-prefix prefix-sys" style="color:#ff7b72;">error</span>
+          <span class="msg-err">Day 4: 3 wasted training cycles · root cause unknown</span>
+        </div>
+        <div class="chat-msg" style="background:#1a0505;">
+          <span class="msg-muted" style="padding-left:52px;">No snapshot of data state exists. No feature provenance.</span>
+        </div>
+        <div class="chat-msg hover-hl" style="background:#1a0505;">
+          <span class="msg-muted" style="padding-left:52px;">All hypotheses live only in this chat context.</span>
+        </div>
+        <div class="chat-msg">
+          <span class="msg-muted" style="padding-left:4px;font-style:italic;color:#3d444d;">// investigation stalled — no structural record of prior state</span>
+        </div>
+      </div>
+      <div class="anno-sidebar">
+        <div class="anno-header">Blind Spots</div>
+        <div class="anno-item">No snapshot versioning</div>
+        <div class="anno-item">No feature distribution record</div>
+        <div class="anno-item">Hypotheses only in chat context</div>
+        <div class="anno-item" style="color:#3d444d; border:none;">No lineage between data and model</div>
+      </div>
+    </div>
+    <div class="ide-statusbar">
+      <div class="status-item status-err">✕ 3 errors</div>
+      <div class="status-item status-warn">⚠ investigation blocked</div>
+      <div class="status-item" style="margin-left:auto;">UTF-8 · Python</div>
+    </div>
+  </div>
+
+  <!-- divider ruler -->
+  <div class="panel-ruler"></div>
+
+  <!-- ② Agentic Consensus panel — Lineage Explorer -->
+  <div class="panel panel-consensus">
+
+    <!-- Toolbar -->
+    <div class="lex-toolbar">
+      <div class="lex-breadcrumb">
+        <span class="crumb-root">consensus</span>
+        <span class="crumb-sep">/</span>
+        <span>ml-pipeline</span>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-active">lineage.cg</span>
+      </div>
+      <div class="lex-toolbar-actions">
+        <div class="lex-btn">
+          <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="3.5" stroke="#64748b" stroke-width="1"/><path d="M4.5 2.5v2l1.5 1" stroke="#64748b" stroke-width="1" stroke-linecap="round"/></svg>
+          History
+        </div>
+        <div class="lex-btn">
+          <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M4.5 1v7M1 4.5h7" stroke="#64748b" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Add Node
+        </div>
+        <div class="lex-btn" style="border-color:#f59e0b; background:#fffbeb; color:#b45309; font-weight:600;">
+          <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M4.5 1L1 7.5h7L4.5 1z" stroke="#b45309" stroke-width="1" stroke-linejoin="round"/><path d="M4.5 3.5v2" stroke="#b45309" stroke-width="1" stroke-linecap="round"/></svg>
+          H(C|I): HIGH
+        </div>
+        <div class="lex-btn btn-audit-ok">
+          <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5L3.5 6.5L7.5 2.5" stroke="#7c3aed" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Audit
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="lex-body">
+
+      <!-- Left properties panel -->
+      <div class="lex-sidebar">
+        <div class="lex-sidebar-section">
+          <div class="lex-sidebar-heading">Selected Node</div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">id</span>
+            <span class="lex-prop-val">feature_pipeline</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">type</span>
+            <span class="lex-prop-val">FeaturePipeline</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">state</span>
+            <span class="lex-prop-val val-amber">ANOMALY</span>
+          </div>
+        </div>
+        <div class="lex-sidebar-section">
+          <div class="lex-sidebar-heading">Drift Signal</div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">field</span>
+            <span class="lex-prop-val">click_rate_7d</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">window</span>
+            <span class="lex-prop-val val-red">7d → 3d</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">cause</span>
+            <span class="lex-prop-val val-amber">PR #847</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">tracked</span>
+            <span class="lex-prop-val val-red">false</span>
+          </div>
+        </div>
+        <div class="lex-sidebar-section">
+          <div class="lex-sidebar-heading">Provenance</div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">upstream</span>
+            <span class="lex-prop-val">data_snapshot</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">downstream</span>
+            <span class="lex-prop-val">model</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">last_modified</span>
+            <span class="lex-prop-val val-amber">PR #847</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">fix_commit</span>
+            <span class="lex-prop-val val-green">PR #847</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main graph canvas -->
+      <div class="lex-canvas">
+        <svg width="100%" height="100%" viewBox="0 0 580 252" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arr-gray" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+              <polygon points="0 0, 7 3.5, 0 7" fill="#94a3b8"/>
+            </marker>
+            <marker id="arr-green" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+              <polygon points="0 0, 7 3.5, 0 7" fill="#7c3aed"/>
+            </marker>
+            <marker id="arr-red" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+              <polygon points="0 0, 7 3.5, 0 7" fill="#dc2626"/>
+            </marker>
+          </defs>
+
+          <!-- ── pipeline lineage: horizontal ── -->
+
+          <!-- data_snapshot -->
+          <rect x="14" y="68" width="108" height="30" rx="5" fill="#f8fafc" stroke="#475569" stroke-width="1.5"/>
+          <text x="68" y="80" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="9" fill="#475569" font-weight="700">data_snapshot</text>
+          <text x="68" y="92" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="8" fill="#64748b">v2024-01-15</text>
+
+          <!-- arrow → feature_pipeline -->
+          <line x1="122" y1="83" x2="152" y2="83" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arr-gray)"/>
+
+          <!-- feature_pipeline — ANOMALY (selected, amber ring) -->
+          <rect x="155" y="62" width="120" height="42" rx="5" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+          <text x="215" y="78" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="9" fill="#92400e" font-weight="700">feature_pipeline</text>
+          <!-- anomaly annotation inline -->
+          <rect x="163" y="84" width="104" height="13" rx="3" fill="#fef3c7"/>
+          <text x="215" y="93.5" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="7.5" fill="#b45309">⚠ window 7d → 3d (PR #841)</text>
+
+          <!-- arrow → model -->
+          <line x1="275" y1="83" x2="305" y2="83" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arr-gray)"/>
+
+          <!-- model -->
+          <rect x="308" y="68" width="76" height="30" rx="5" fill="#f8fafc" stroke="#64748b" stroke-width="1.2"/>
+          <text x="346" y="80" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="9" fill="#374151" font-weight="600">model</text>
+          <text x="346" y="92" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="8" fill="#64748b">rec-v12</text>
+
+          <!-- arrow → eval_metrics (red, shows impact) -->
+          <line x1="384" y1="83" x2="414" y2="83" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-red)"/>
+
+          <!-- eval_metrics — ERROR -->
+          <rect x="417" y="62" width="96" height="42" rx="5" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+          <text x="465" y="78" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="9" fill="#dc2626" font-weight="700">eval_metrics</text>
+          <rect x="425" y="84" width="80" height="13" rx="3" fill="#fee2e2"/>
+          <text x="465" y="93.5" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="8" fill="#dc2626" font-weight="600">AUC ↓ 2pt · 4 days</text>
+
+          <!-- ── H(C|I) entropy track ── -->
+          <!-- label -->
+          <text x="14" y="136" font-family="'SF Mono','Menlo',monospace" font-size="8.5" fill="#94a3b8">H(C|I)</text>
+          <!-- track bg -->
+          <rect x="50" y="128" width="280" height="10" rx="5" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+          <!-- gradient fill: red→amber→green, full width = resolved -->
+          <defs>
+            <linearGradient id="entropy-grad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#dc2626"/>
+              <stop offset="50%" stop-color="#f59e0b"/>
+              <stop offset="100%" stop-color="#7c3aed"/>
+            </linearGradient>
+          </defs>
+          <rect x="50" y="128" width="280" height="10" rx="5" fill="url(#entropy-grad)"/>
+          <!-- HIGH label at start -->
+          <text x="54" y="136.5" font-family="'SF Mono','Menlo',monospace" font-size="7.5" fill="#ffffff" font-weight="700">HIGH</text>
+          <!-- RESOLVED label at end -->
+          <text x="274" y="136.5" font-family="'SF Mono','Menlo',monospace" font-size="7.5" fill="#ffffff" font-weight="700">RESOLVED</text>
+          <!-- arrow label -->
+          <text x="338" y="136" font-family="'SF Mono','Menlo',monospace" font-size="8" fill="#64748b">H(C|I) → 0</text>
+
+          <!-- ── Hypothesis boxes ── -->
+          <!-- Hyp A: eliminated -->
+          <rect x="14" y="158" width="172" height="46" rx="5" fill="#fafafa" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+          <!-- grey overlay to visually "cross out" the box -->
+          <rect x="14" y="158" width="172" height="46" rx="5" fill="#f1f5f9" fill-opacity="0.65"/>
+          <text x="24" y="173" font-family="'SF Mono','Menlo',monospace" font-size="8" fill="#94a3b8" font-weight="600" text-decoration="line-through">Hyp A · Data Shift</text>
+          <text x="24" y="187" font-family="'SF Mono','Menlo',monospace" font-size="8" fill="#cbd5e1">upstream distribution change</text>
+          <rect x="138" y="164" width="40" height="14" rx="7" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+          <text x="158" y="174" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="7.5" fill="#94a3b8" font-weight="700">✕ ELIM</text>
+          <text x="24" y="199" font-family="'SF Mono','Menlo',monospace" font-size="7.5" fill="#cbd5e1" font-style="italic">drift test: no shift detected</text>
+
+          <!-- Hyp B: confirmed — purple overlay for "winner" feel -->
+          <rect x="196" y="158" width="210" height="46" rx="5" fill="#f5f3ff" stroke="#7c3aed" stroke-width="2"/>
+          <!-- subtle purple bg overlay to highlight confirmed -->
+          <rect x="196" y="158" width="210" height="46" rx="5" fill="#7c3aed" fill-opacity="0.06"/>
+          <text x="206" y="173" font-family="'SF Mono','Menlo',monospace" font-size="8" fill="#4c1d95" font-weight="700">Hyp B · Feature Drift</text>
+          <text x="206" y="187" font-family="'SF Mono','Menlo',monospace" font-size="8" fill="#5b21b6">click_rate_7d window silently narrowed</text>
+          <rect x="354" y="164" width="44" height="14" rx="7" fill="#7c3aed" stroke="#5b21b6" stroke-width="1"/>
+          <text x="376" y="174" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="7.5" fill="#ffffff" font-weight="700">✓ CONF</text>
+          <text x="206" y="199" font-family="'SF Mono','Menlo',monospace" font-size="7.5" fill="#4c1d95" font-style="italic">PR #847 → window reverted → AUC recovered</text>
+
+          <!-- bottom summary line — style matches right column -->
+          <text x="270" y="228" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="8" fill="#64748b">root cause located · fix applied · AUC recovered same day</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Status bar -->
+    <div class="lex-statusbar">
+      <div class="lex-status-item">
+        <div class="dot dot-green"></div>
+        4 nodes · 3 edges
+      </div>
+      <div class="lex-status-item" style="color:#b45309;">
+        <div class="dot dot-amber"></div>
+        1 anomaly: feature_pipeline
+      </div>
+      <div class="lex-status-item" style="color:#7c3aed;">
+        <div class="dot dot-green"></div>
+        Hyp B confirmed · fix applied
+      </div>
+      <div class="lex-status-right">
+        <div class="lex-status-item">LineageGraph</div>
+      </div>
+    </div>
+
+  </div><!-- /panel-consensus -->
+
+</div><!-- /col-l -->
+
+<!-- ════════════════════════════════════════ RIGHT COLUMN: A/B Experiment -->
+<div>
+
+  <!-- Case header -->
+  <div class="case-header">
+    <div class="case-header-icon">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <rect x="1" y="1" width="12" height="12" rx="2" stroke="#6b7280" stroke-width="1.2"/>
+        <path d="M4 5h6M4 7h4M4 9h5" stroke="#6b7280" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="case-header-text">
+      <span class="case-title">A/B Experiment</span>
+      <span class="case-sub">feature-leakage · ctr-false-positive</span>
+    </div>
+  </div>
+
+  <!-- ① Vibe Coding panel -->
+  <div class="panel panel-vibe">
+    <div class="ide-tabbar">
+      <div class="ide-tab active">
+        <div class="tab-dot modified"></div>
+        experiment.log
+      </div>
+      <div class="ide-tab">ab_analysis.py</div>
+      <div class="ide-tab">feature_config.yml</div>
+    </div>
+
+    <div class="ide-body" style="height: calc(100% - 28px - 18px);">
+      <div class="gutter">
+        <div class="ln">1</div>
+        <div class="ln">2</div>
+        <div class="ln">3</div>
+        <div class="ln">4</div>
+        <div class="ln">5</div>
+        <div class="ln">6</div>
+        <div class="ln">7</div>
+        <div class="ln">8</div>
+        <div class="ln" style="color:#f0883e;">9</div>
+        <div class="ln" style="color:#f0883e;">10</div>
+        <div class="ln" style="color:#f0883e;">11</div>
+      </div>
+
+      <div class="editor-main">
+        <div class="chat-msg">
+          <span class="msg-muted" style="padding-right:6px;font-style:italic;color:#3d444d;">// Experiment: new recommendation strategy</span>
+        </div>
+        <div class="chat-msg hover-hl">
+          <span class="msg-prefix" style="color:#8b949e;font-weight:600;margin-right:6px;">ctrl</span>
+          <span class="msg-text">12 features &nbsp;</span>
+          <span class="pill pill-green" style="font-size:8.5px; padding:1px 5px;">✓ clean</span>
+        </div>
+        <div class="chat-msg">
+          <span class="msg-prefix" style="color:#ff7b72;font-weight:600;margin-right:6px;">treat</span>
+          <span class="msg-text">13 features &nbsp;</span>
+          <span class="inline-red" style="font-family:'SF Mono','Menlo',monospace;font-size:11px;">user_realtime_signal</span>
+          <span class="pill pill-red" style="margin-left:6px;font-size:8.5px;padding:1px 5px;">LEAKAGE</span>
+        </div>
+        <div class="chat-msg hover-hl">
+          <span class="msg-muted" style="padding-right:6px;">——</span>
+          <span class="msg-muted">Analysis: CTR lift</span>
+          <span class="inline-green" style="margin: 0 4px; font-weight:700; font-family:'SF Mono','Menlo',monospace;">significant</span>
+          <span class="msg-muted">· p &lt; 0.05</span>
+        </div>
+        <div class="chat-msg" style="background:#1a1000; border-left:2px solid #f0883e;">
+          <span class="msg-prefix prefix-agent">agent</span>
+          <span class="msg-text">Results look strong. Recommend full rollout ▶</span>
+          <span class="msg-warn" style="margin-left:8px; font-weight:700;">⚠ no causal validity check</span>
+        </div>
+        <div class="chat-msg hover-hl">
+          <span class="msg-prefix prefix-user">user</span>
+          <span class="msg-text">Proceed with rollout to production?</span>
+        </div>
+        <div class="chat-msg">
+          <span class="msg-prefix prefix-agent">agent</span>
+          <span class="msg-text">Yes, statistical significance confirmed</span>
+        </div>
+        <div class="chat-msg hover-hl" style="background:#120a00;">
+          <span class="msg-prefix prefix-sys" style="color:#f0883e;">warn</span>
+          <span class="msg-warn">Pipelines in separate repos — feature parity not verified</span>
+        </div>
+        <div class="chat-msg" style="background:#120a00;">
+          <span class="msg-muted" style="padding-left:52px;">Statistical test operates on structurally invalid inputs</span>
+        </div>
+        <div class="chat-msg hover-hl" style="background:#120a00;">
+          <span class="msg-muted" style="padding-left:52px;">False positive routed to production rollout decision</span>
+        </div>
+      </div>
+
+      <div class="anno-sidebar">
+        <div class="anno-header">Blind Spots</div>
+        <div class="anno-item">Feature pipelines in separate repo</div>
+        <div class="anno-item">Statistical test: correct on invalid inputs</div>
+        <div class="anno-item" style="color:#3d444d; border:none;">No parity contract between ctrl / treat</div>
+      </div>
+    </div>
+    <div class="ide-statusbar">
+      <div class="status-item status-warn">⚠ 1 structural warning</div>
+      <div class="status-item" style="color:#f0883e;">rollout: pending approval</div>
+      <div class="status-item" style="margin-left:auto;">UTF-8 · Python</div>
+    </div>
+  </div>
+
+  <!-- divider ruler -->
+  <div class="panel-ruler"></div>
+
+  <!-- ② Agentic Consensus panel — Causal DAG Explorer -->
+  <div class="panel panel-consensus">
+
+    <!-- Toolbar -->
+    <div class="lex-toolbar">
+      <div class="lex-breadcrumb">
+        <span class="crumb-root">consensus</span>
+        <span class="crumb-sep">/</span>
+        <span>ab-experiment</span>
+        <span class="crumb-sep">/</span>
+        <span class="crumb-active">causal.cg</span>
+      </div>
+      <div class="lex-toolbar-actions">
+        <div class="lex-btn">
+          <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><circle cx="4.5" cy="4.5" r="3.5" stroke="#64748b" stroke-width="1"/><path d="M4.5 2.5v2l1.5 1" stroke="#64748b" stroke-width="1" stroke-linecap="round"/></svg>
+          History
+        </div>
+        <div class="lex-btn" style="border-color:#e2e8f0;">
+          <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><rect x="1" y="1" width="7" height="7" rx="1.5" stroke="#64748b" stroke-width="1"/><path d="M3 4.5h3M4.5 3v3" stroke="#64748b" stroke-width="1" stroke-linecap="round"/></svg>
+          Add Node
+        </div>
+        <div class="lex-btn" style="border-color:#f59e0b; background:#fffbeb; color:#b45309; font-weight:600;">
+          <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M4.5 1L1 7.5h7L4.5 1z" stroke="#b45309" stroke-width="1" stroke-linejoin="round"/><path d="M4.5 3.5v2" stroke="#b45309" stroke-width="1" stroke-linecap="round"/></svg>
+          H(C|I): HIGH
+        </div>
+        <div class="lex-btn btn-audit" style="background:#fef2f2; border-color:#fca5a5; color:#dc2626;">
+          <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M4.5 1L1 7.5h7L4.5 1z" stroke="#dc2626" stroke-width="1" stroke-linejoin="round"/><path d="M4.5 4v1.5" stroke="#dc2626" stroke-width="1" stroke-linecap="round"/><circle cx="4.5" cy="6.5" r="0.5" fill="#dc2626"/></svg>
+          ✕ Audit Failed
+        </div>
+        <div class="lex-btn" style="border-color:#fca5a5; background:#fef2f2; color:#dc2626; font-weight:600;">
+          ⊘ BLOCKED
+        </div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="lex-body">
+
+      <!-- Left properties panel -->
+      <div class="lex-sidebar">
+        <div class="lex-sidebar-section">
+          <div class="lex-sidebar-heading">Selected Node</div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">id</span>
+            <span class="lex-prop-val">pipeline_treat</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">type</span>
+            <span class="lex-prop-val">FeaturePipeline</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">state</span>
+            <span class="lex-prop-val val-red">VIOLATION</span>
+          </div>
+        </div>
+        <div class="lex-sidebar-section">
+          <div class="lex-sidebar-heading">Parity Contract</div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">ctrl_features</span>
+            <span class="lex-prop-val val-green">12 ✓</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">treat_features</span>
+            <span class="lex-prop-val val-red">13 ✕</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">extra</span>
+            <span class="lex-prop-val val-red">realtime_signal</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">verdict</span>
+            <span class="lex-prop-val val-red">FAILED</span>
+          </div>
+        </div>
+        <div class="lex-sidebar-section">
+          <div class="lex-sidebar-heading">Outcome</div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">analysis</span>
+            <span class="lex-prop-val val-red">blocked</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">after fix</span>
+            <span class="lex-prop-val val-green">lift: n.s.</span>
+          </div>
+          <div class="lex-prop-row">
+            <span class="lex-prop-key">avoided</span>
+            <span class="lex-prop-val val-green">false pos.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main causal DAG canvas -->
+      <div class="lex-canvas">
+        <svg width="100%" height="100%" viewBox="0 0 580 260" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <marker id="arr2-gray" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+              <polygon points="0 0, 7 3.5, 0 7" fill="#94a3b8"/>
+            </marker>
+            <marker id="arr2-green" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+              <polygon points="0 0, 7 3.5, 0 7" fill="#7c3aed"/>
+            </marker>
+            <marker id="arr2-red" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+              <polygon points="0 0, 7 3.5, 0 7" fill="#dc2626"/>
+            </marker>
+          </defs>
+
+          <!-- experiment_config root -->
+          <rect x="189" y="8" width="187" height="32" rx="5" fill="#f8fafc" stroke="#475569" stroke-width="1.5"/>
+          <text x="282" y="21" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="9" fill="#1e293b" font-weight="700">experiment_config</text>
+          <text x="282" y="34" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="7.5" fill="#64748b">ab-v3 · 2024-01-22</text>
+
+          <!-- branch left (ctrl) -->
+          <line x1="240" y1="40" x2="124" y2="76" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arr2-gray)"/>
+          <!-- branch right (treat) -->
+          <line x1="325" y1="40" x2="444" y2="76" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arr2-gray)"/>
+
+          <!-- pipeline_ctrl (left, OK) -->
+          <rect x="18" y="78" width="204" height="32" rx="5" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+          <text x="120" y="91" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="9" fill="#5b21b6" font-weight="700">pipeline_ctrl</text>
+          <text x="120" y="104" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="8" fill="#5b21b6">✓ 12 features · parity ok</text>
+
+          <!-- pipeline_treat (right, VIOLATION) -->
+          <rect x="343" y="78" width="224" height="32" rx="5" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+          <text x="455" y="91" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="9" fill="#dc2626" font-weight="700">pipeline_treat</text>
+          <text x="455" y="104" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="8" fill="#dc2626">✕ 13 features · +realtime_signal</text>
+
+          <!-- ctrl → metric -->
+          <line x1="120" y1="110" x2="229" y2="148" stroke="#7c3aed" stroke-width="1.2" marker-end="url(#arr2-green)"/>
+          <!-- treat → metric (red dashed) -->
+          <line x1="455" y1="110" x2="350" y2="148" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr2-red)"/>
+
+          <!-- metric_definition (center below) -->
+          <rect x="187" y="150" width="192" height="32" rx="5" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+          <text x="283" y="163" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="9" fill="#dc2626" font-weight="700">metric_definition</text>
+          <text x="283" y="176" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="8" fill="#dc2626">CTR lift: CAUSALLY INVALID</text>
+
+          <!-- feature_leakage_check node — KEY NODE, prominently styled -->
+          <rect x="187" y="194" width="194" height="30" rx="5" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/>
+          <text x="284" y="207" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="9" fill="#c2410c" font-weight="700">feature_leakage_check</text>
+          <text x="284" y="218" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="7.5" fill="#9a3412" font-weight="600">⊘ CONTRACT FAILS HERE</text>
+
+          <!-- arrow from metric_definition down to leakage check -->
+          <line x1="283" y1="182" x2="283" y2="192" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="3,2" marker-end="url(#arr2-red)"/>
+
+          <!-- PARITY CONTRACT FAILED banner -->
+          <rect x="18" y="234" width="265" height="32" rx="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+          <text x="150" y="245" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="8.5" fill="#dc2626" font-weight="700">✕  PARITY CONTRACT: FAILED</text>
+          <text x="150" y="258" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="7.5" fill="#dc2626">analysis blocked before inference</text>
+
+          <!-- After fix: result -->
+          <rect x="295" y="234" width="275" height="32" rx="4" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+          <text x="432" y="245" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="8.5" fill="#5b21b6" font-weight="600">✓ re-run: lift not significant</text>
+          <text x="432" y="258" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="8.5" fill="#5b21b6" font-weight="600">false positive avoided</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Status bar -->
+    <div class="lex-statusbar">
+      <div class="lex-status-item" style="color:#dc2626;">
+        <div class="dot dot-red"></div>
+        PARITY CONTRACT: FAILED
+      </div>
+      <div class="lex-status-item" style="color:#dc2626;">
+        <div class="dot dot-red"></div>
+        1 violation: pipeline_treat (+1 feature)
+      </div>
+      <div class="lex-status-item" style="color:#7c3aed;">
+        <div class="dot dot-green"></div>
+        analysis blocked · false positive avoided
+      </div>
+      <div class="lex-status-right">
+        <div class="lex-status-item">CausalDAG</div>
+      </div>
+    </div>
+
+  </div><!-- /panel-consensus -->
+
+</div><!-- /col-r -->
+
+</div><!-- /root -->
+
+</body>
+</html>

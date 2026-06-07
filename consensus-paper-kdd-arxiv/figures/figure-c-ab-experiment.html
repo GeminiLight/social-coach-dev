@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Figure C — A/B Test Feature Leakage</title>
+<style>
+:root {
+  --ink: #1f2937; --body: #374151; --secondary: #6b7280; --muted: #9ca3af;
+  --rule: #d1d5db; --light-rule: #e5e7eb;
+  --red: #b91c1c; --green: #15803d; --amber: #92400e; --blue: #1e40af; --purple: #6d28d9;
+  --bg: #ffffff; --code-bg: #1e293b; --code-text: #e2e8f0; --light-bg: #f8fafc;
+  --font-ui: 'Inter', 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Menlo', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { width:1440px; margin:0 auto; background:var(--bg); font-family:var(--font-ui); color:var(--ink); -webkit-font-smoothing:antialiased; }
+
+.fig-label { padding:14px 28px 10px; display:flex; align-items:baseline; justify-content:space-between; border-bottom:1.5px solid var(--ink); }
+.fig-id { font-size:22px; font-weight:700; } .fig-id em { font-style:normal; font-weight:400; color:var(--secondary); font-size:20px; margin-left:4px; }
+.fig-domain { font-size:14px; text-transform:uppercase; letter-spacing:0.1em; color:var(--secondary); font-weight:600; }
+
+.panels { display:grid; grid-template-columns:1fr 1fr; }
+.panel { padding:16px 28px 20px; }
+.panel-right { border-left:1px solid var(--rule); }
+.panel-title { font-size:16px; font-weight:700; color:var(--secondary); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:14px; padding-bottom:6px; border-bottom:1px solid var(--light-rule); }
+
+.code { background:var(--code-bg); border-radius:4px; padding:12px 16px; margin-bottom:14px; font-family:var(--font-mono); font-size:15px; line-height:1.7; color:var(--code-text); white-space:pre-wrap; }
+.code .kw { color:#c678dd; } .code .str { color:#98c379; } .code .fn { color:#61afef; } .code .num { color:#d19a66; } .code .cm { color:#636c7c; font-style:italic; }
+
+.chat { margin-bottom:14px; }
+.chat-line { font-size:17px; line-height:1.6; color:var(--body); margin-bottom:2px; }
+.chat-line .rl { font-weight:700; color:var(--ink); } .chat-line .rl-a { font-weight:600; color:var(--secondary); }
+.chat-result { font-family:var(--font-mono); font-size:15px; color:var(--code-text); background:var(--code-bg); padding:8px 14px; border-radius:4px; margin:4px 0 8px; line-height:1.6; }
+.chat-result .hl { color:#98c379; font-weight:700; }
+
+.blind { margin-bottom:14px; }
+.blind-hd { font-size:14px; font-weight:700; color:var(--red); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; }
+.blind-item { font-size:16px; line-height:1.55; color:var(--body); padding-left:18px; position:relative; margin-bottom:3px; }
+.blind-item::before { content:''; position:absolute; left:2px; top:9px; width:6px; height:6px; border-radius:50%; background:var(--red); }
+.blind-item code { font-family:var(--font-mono); font-size:14px; background:#f1f5f9; padding:1px 4px; border-radius:2px; }
+
+.outcome { border-left:3px solid var(--rule); padding:8px 0 8px 14px; margin-top:10px; }
+.out-fail { border-left-color:var(--red); } .out-ok { border-left-color:var(--green); }
+.out-hd { font-size:15px; font-weight:700; margin-bottom:4px; }
+.out-hd-fail { color:var(--red); } .out-hd-ok { color:var(--green); }
+.out-row { font-size:15px; line-height:1.6; color:var(--body); display:flex; gap:10px; }
+.out-row .tm { font-family:var(--font-mono); font-weight:700; color:var(--muted); min-width:50px; flex-shrink:0; font-size:14px; }
+.out-row strong { color:var(--ink); }
+
+.graph-box { background:var(--light-bg); border:1px solid var(--rule); border-radius:4px; padding:10px 12px; margin-bottom:14px; }
+.graph-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
+.graph-title { font-size:17px; font-weight:700; } .graph-title em { font-style:italic; }
+.graph-sub { font-size:14px; color:var(--muted); font-family:var(--font-mono); margin-bottom:8px; }
+.entropy-tag { font-family:var(--font-mono); font-size:13px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.entropy-tag .bar { width:40px; height:4px; background:#e5e7eb; border-radius:2px; overflow:hidden; display:inline-block; }
+.entropy-tag .fill { display:block; height:100%; border-radius:2px; }
+.fill-high { width:85%; background:var(--red); } .lbl-high { font-weight:800; color:var(--red); }
+
+.alert { border-left:3px solid var(--red); padding:8px 14px; margin-bottom:12px; background:#fef2f2; border-radius:0 4px 4px 0; }
+.alert-hd { font-size:15px; font-weight:700; color:var(--red); margin-bottom:4px; }
+.alert-text { font-size:15px; color:var(--body); line-height:1.6; }
+.alert-text code { font-family:var(--font-mono); font-size:13px; background:rgba(185,28,28,0.08); padding:1px 5px; border-radius:2px; color:var(--red); }
+
+.evidence { margin-bottom:12px; }
+.ev-hd { font-size:14px; font-weight:700; color:var(--secondary); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; }
+.ev-row { display:flex; align-items:center; gap:8px; font-size:15px; font-family:var(--font-mono); color:var(--body); line-height:1.7; }
+.ev-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.ev-g { background:var(--green); } .ev-r { background:var(--red); } .ev-a { background:var(--amber); } .ev-m { background:var(--muted); }
+.ev-st { font-weight:700; margin-left:auto; white-space:nowrap; }
+.ev-st-g { color:var(--green); } .ev-st-r { color:var(--red); } .ev-st-a { color:var(--amber); } .ev-st-m { color:var(--muted); }
+
+.resolution { border-left:3px solid var(--green); padding:8px 14px; margin-bottom:12px; background:#f0fdf4; border-radius:0 4px 4px 0; }
+.res-hd { font-size:15px; font-weight:700; color:var(--green); margin-bottom:4px; }
+.res-text { font-size:15px; color:var(--body); line-height:1.6; }
+.res-text code { font-family:var(--font-mono); font-size:13px; }
+.res-text strong { color:var(--ink); }
+.res-entropy { font-size:13px; color:var(--muted); font-family:var(--font-mono); margin-top:4px; }
+</style>
+</head>
+<body>
+
+<div class="fig-label">
+  <div class="fig-id">Scenario C<em>— A/B Test Feature Leakage</em></div>
+  <div class="fig-domain">Data Science</div>
+</div>
+
+<div class="panels">
+
+<!-- ════ LEFT ════ -->
+<div class="panel">
+  <div class="panel-title">(a) Vibe Coding</div>
+
+  <div class="code"><span class="kw">def</span> <span class="fn">analyze_ab_test</span>(ctrl, treat):
+    ctr_c = ctrl[<span class="str">"clicks"</span>].sum() / ctrl[<span class="str">"impressions"</span>].sum()
+    ctr_t = treat[<span class="str">"clicks"</span>].sum() / treat[<span class="str">"impressions"</span>].sum()
+    lift = (ctr_t - ctr_c) / ctr_c
+    z, p = stats.<span class="fn">proportions_ztest</span>(...)
+    <span class="kw">return</span> {<span class="str">"lift"</span>: lift, <span class="str">"p_value"</span>: p}</div>
+
+  <div class="chat">
+    <div class="chat-line"><span class="rl">User:</span> Analyze the A/B test for the new rec strategy</div>
+    <div class="chat-line"><span class="rl-a">Agent:</span> Computing CTR lift + z-test.</div>
+    <div class="chat-result">Lift: <span class="hl">+3.1%</span>   p-value: <span class="hl">0.003</span>   95% CI: [+1.2%, +5.0%]</div>
+    <div class="chat-line"><span class="rl">User:</span> Great, prepare the launch report</div>
+    <div class="chat-line"><span class="rl-a">Agent:</span> Recommendation: <strong>proceed with full rollout</strong></div>
+  </div>
+
+  <div class="blind">
+    <div class="blind-hd">Blind Spots</div>
+    <div class="blind-item">Feature parity? Pipelines in different repo — not visible</div>
+    <div class="blind-item"><code>user_realtime_signal</code> only in treatment? Config in feature service</div>
+    <div class="blind-item">CTR excludes bot traffic? Using default metric — no audit</div>
+  </div>
+
+  <div class="outcome out-fail">
+    <div class="out-hd out-hd-fail">Post-Launch (without consensus)</div>
+    <div class="out-row"><span class="tm">Week 0</span> Full rollout based on "CTR +3.1%, p=0.003"</div>
+    <div class="out-row"><span class="tm">Week 2</span> CTR gains disappear in production</div>
+    <div class="out-row"><span class="tm">Week 3</span> Root cause: <code style="font-family:var(--font-mono);font-size:14px;">user_realtime_signal</code> leaked</div>
+    <div class="out-row"><span class="tm" style="color:var(--red);">Cost</span> <span style="color:var(--red);font-weight:700;">3 weeks + false positive in experiment log</span></div>
+  </div>
+</div>
+
+<!-- ════ RIGHT ════ -->
+<div class="panel panel-right">
+  <div class="panel-title">(b) Agentic Consensus</div>
+
+  <div class="graph-box">
+    <div class="graph-header">
+      <div class="graph-title">Consensus Layer <em>C</em> — Experiment Causal DAG</div>
+      <div class="entropy-tag">H(C|I) <span class="bar"><span class="fill fill-high"></span></span> <span class="lbl-high">HIGH</span></div>
+    </div>
+    <div class="graph-sub">feature parity · metric audit · evidence-linked</div>
+
+    <svg width="100%" height="225" viewBox="0 0 660 225" fill="none">
+      <defs>
+        <marker id="a" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4" fill="#6b7280"/></marker>
+        <marker id="ar" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4" fill="#b91c1c"/></marker>
+        <marker id="ag" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto"><path d="M0,0 L6,2 L0,4" fill="#15803d"/></marker>
+      </defs>
+
+      <!-- experiment_config -->
+      <rect x="238" y="4" width="170" height="30" rx="3" fill="white" stroke="#d1d5db"/>
+      <rect x="238" y="4" width="4" height="30" fill="#1e40af" rx="2"/>
+      <text x="323" y="24" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" fill="#1f2937" font-weight="700">experiment_config</text>
+
+      <!-- arrows to groups -->
+      <line x1="288" y1="34" x2="170" y2="60" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+      <line x1="358" y1="34" x2="480" y2="60" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+
+      <!-- control_group -->
+      <rect x="65" y="62" width="160" height="30" rx="3" fill="white" stroke="#15803d"/>
+      <rect x="65" y="62" width="4" height="30" fill="#15803d" rx="2"/>
+      <text x="145" y="82" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" fill="#1f2937" font-weight="600">control_group</text>
+      <text x="230" y="74" font-family="Inter, sans-serif" font-size="13" fill="#15803d" font-weight="700">✓</text>
+
+      <!-- treatment_group -->
+      <rect x="405" y="62" width="180" height="30" rx="3" fill="white" stroke="#b91c1c"/>
+      <rect x="405" y="62" width="4" height="30" fill="#b91c1c" rx="2"/>
+      <text x="495" y="82" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" fill="#1f2937" font-weight="600">treatment_group</text>
+      <text x="590" y="74" font-family="Inter, sans-serif" font-size="13" fill="#b91c1c" font-weight="700">✗</text>
+
+      <!-- arrows to pipelines -->
+      <line x1="145" y1="92" x2="145" y2="116" stroke="#15803d" stroke-width="1.5" marker-end="url(#ag)"/>
+      <line x1="495" y1="92" x2="495" y2="116" stroke="#b91c1c" stroke-width="1.5" marker-end="url(#ar)"/>
+
+      <!-- feature_pipeline_ctrl -->
+      <rect x="35" y="118" width="220" height="38" rx="3" fill="white" stroke="#d1d5db"/>
+      <rect x="35" y="118" width="4" height="38" fill="#15803d" rx="2"/>
+      <text x="145" y="136" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" fill="#1f2937" font-weight="600">feature_pipeline_ctrl</text>
+      <text x="145" y="150" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#6b7280">12 features</text>
+
+      <!-- feature_pipeline_treat -->
+      <rect x="385" y="118" width="240" height="38" rx="3" fill="white" stroke="#b91c1c"/>
+      <rect x="385" y="118" width="4" height="38" fill="#b91c1c" rx="2"/>
+      <text x="505" y="136" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" fill="#1f2937" font-weight="600">feature_pipeline_treat</text>
+      <text x="505" y="150" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#b91c1c" font-weight="700">13 features (+user_realtime_signal)</text>
+
+      <!-- Contract violation -->
+      <line x1="255" y1="137" x2="385" y2="137" stroke="#b91c1c" stroke-width="1.5" stroke-dasharray="6,4"/>
+      <text x="320" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#6b7280">contract: feature_parity</text>
+      <rect x="285" y="130" width="70" height="16" rx="3" fill="white" stroke="#b91c1c" stroke-width="1"/>
+      <text x="320" y="143" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b91c1c" font-weight="700">VIOLATED</text>
+
+      <!-- arrows to metric -->
+      <line x1="145" y1="156" x2="265" y2="178" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+      <line x1="505" y1="156" x2="395" y2="178" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+
+      <!-- metric_definition -->
+      <rect x="250" y="180" width="160" height="30" rx="3" fill="white" stroke="#92400e"/>
+      <rect x="250" y="180" width="4" height="30" fill="#92400e" rx="2"/>
+      <text x="330" y="200" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" fill="#1f2937" font-weight="600">metric_definition</text>
+      <text x="415" y="194" font-family="Inter, sans-serif" font-size="13" fill="#92400e" font-weight="700">!</text>
+      <text x="330" y="220" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#92400e">bot_filter: not_enabled</text>
+
+      <!-- Operator labels -->
+      <rect x="8" y="68" width="46" height="16" rx="2" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.8"/>
+      <text x="31" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#1e40af" font-weight="700">Φ</text>
+      <rect x="8" y="88" width="46" height="16" rx="2" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.8"/>
+      <text x="31" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6d28d9" font-weight="700">Ψ</text>
+    </svg>
+  </div>
+
+  <div class="alert">
+    <div class="alert-hd">Auditor: Feature Parity Violation</div>
+    <div class="alert-text">Treatment has <code>user_realtime_signal</code> (13 features) vs control (12). Analysis <strong>blocked</strong>.</div>
+  </div>
+
+  <div class="evidence">
+    <div class="ev-hd">Evidence E</div>
+    <div class="ev-row"><div class="ev-dot ev-r"></div> feature_parity_test <span class="ev-st ev-st-r">FAILED ✗</span></div>
+    <div class="ev-row"><div class="ev-dot ev-a"></div> metric_definition_audit <span class="ev-st ev-st-a">⚠ bot filter off</span></div>
+    <div class="ev-row"><div class="ev-dot ev-g"></div> sample_ratio_mismatch <span class="ev-st ev-st-g">✓ passed</span></div>
+    <div class="ev-row"><div class="ev-dot ev-m"></div> novelty_effect_check <span class="ev-st ev-st-m">○ pending</span></div>
+  </div>
+
+  <div class="outcome out-ok">
+    <div class="out-hd out-hd-ok">Experiment Intercepted Before Conclusion</div>
+    <div class="out-row"><span class="tm">Day 0</span> Auditor flags violation; analysis blocked</div>
+    <div class="out-row"><span class="tm">Day 1</span> Removed <code style="font-family:var(--font-mono);font-size:14px;">user_realtime_signal</code>, enabled bot filter</div>
+    <div class="out-row"><span class="tm">Day 7</span> Re-ran: CTR +0.4%, p=0.31 — <strong>not significant</strong></div>
+    <div class="out-row"><span class="tm" style="color:var(--green);">Saved</span> <span style="color:var(--green);font-weight:700;">3 weeks + avoided false-positive rollout</span></div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

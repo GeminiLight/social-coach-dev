@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Figure A — Microservice API Upgrade</title>
+<style>
+:root {
+  --ink: #1f2937;
+  --body: #374151;
+  --secondary: #6b7280;
+  --muted: #9ca3af;
+  --rule: #d1d5db;
+  --light-rule: #e5e7eb;
+  --red: #b91c1c;
+  --green: #15803d;
+  --amber: #92400e;
+  --blue: #1e40af;
+  --purple: #6d28d9;
+  --bg: #ffffff;
+  --code-bg: #1e293b;
+  --code-text: #e2e8f0;
+  --light-bg: #f8fafc;
+  --font-ui: 'Inter', 'Helvetica Neue', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Menlo', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { width:1440px; margin:0 auto; background:var(--bg); font-family:var(--font-ui); color:var(--ink); -webkit-font-smoothing:antialiased; }
+
+/* ── Top label ── */
+.fig-label {
+  padding:14px 28px 10px;
+  display:flex; align-items:baseline; justify-content:space-between;
+  border-bottom:1.5px solid var(--ink);
+}
+.fig-id { font-size:22px; font-weight:700; color:var(--ink); }
+.fig-id em { font-style:normal; font-weight:400; color:var(--secondary); font-size:20px; margin-left:4px; }
+.fig-domain { font-size:14px; text-transform:uppercase; letter-spacing:0.1em; color:var(--secondary); font-weight:600; }
+
+/* ── Two-panel layout ── */
+.panels { display:grid; grid-template-columns:1fr 1fr; }
+.panel { padding:16px 28px 20px; }
+.panel-right { border-left:1px solid var(--rule); }
+.panel-title {
+  font-size:16px; font-weight:700; color:var(--secondary);
+  text-transform:uppercase; letter-spacing:0.05em;
+  margin-bottom:14px;
+  padding-bottom:6px;
+  border-bottom:1px solid var(--light-rule);
+}
+
+/* ── Code ── */
+.code {
+  background:var(--code-bg); border-radius:4px;
+  padding:12px 16px; margin-bottom:14px;
+  font-family:var(--font-mono); font-size:15px; line-height:1.7;
+  color:var(--code-text); white-space:pre-wrap;
+}
+.code .kw { color:#c678dd; } .code .ty { color:#e5c07b; }
+.code .fn { color:#61afef; } .code .str { color:#98c379; }
+.code .cm { color:#636c7c; font-style:italic; }
+.code .del { background:rgba(220,38,38,0.18); display:block; margin:0 -16px; padding:0 16px; }
+.code .add { background:rgba(34,197,94,0.14); display:block; margin:0 -16px; padding:0 16px; }
+
+/* ── Chat summary ── */
+.chat { margin-bottom:14px; }
+.chat-line { font-size:17px; line-height:1.6; color:var(--body); margin-bottom:2px; }
+.chat-line .rl { font-weight:700; color:var(--ink); }
+.chat-line .rl-a { font-weight:600; color:var(--secondary); }
+.chat-ok { font-size:16px; color:var(--green); font-weight:700; margin:4px 0; }
+
+/* ── Blind spots ── */
+.blind { margin-bottom:14px; }
+.blind-hd { font-size:14px; font-weight:700; color:var(--red); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; }
+.blind-item { font-size:16px; line-height:1.55; color:var(--body); padding-left:18px; position:relative; margin-bottom:3px; }
+.blind-item::before { content:''; position:absolute; left:2px; top:9px; width:6px; height:6px; border-radius:50%; background:var(--red); }
+.blind-item strong { font-weight:700; color:var(--ink); }
+.blind-item code { font-family:var(--font-mono); font-size:14px; background:#f1f5f9; padding:1px 4px; border-radius:2px; }
+
+/* ── Outcome ── */
+.outcome { border-left:3px solid var(--rule); padding:8px 0 8px 14px; margin-top:10px; }
+.out-fail { border-left-color:var(--red); }
+.out-ok { border-left-color:var(--green); }
+.out-hd { font-size:15px; font-weight:700; margin-bottom:4px; }
+.out-hd-fail { color:var(--red); } .out-hd-ok { color:var(--green); }
+.out-row { font-size:15px; line-height:1.6; color:var(--body); display:flex; gap:10px; }
+.out-row .tm { font-family:var(--font-mono); font-weight:700; color:var(--muted); min-width:44px; flex-shrink:0; font-size:14px; }
+.out-row code { font-family:var(--font-mono); font-size:13px; }
+
+/* ── Graph box ── */
+.graph-box {
+  background:var(--light-bg); border:1px solid var(--rule); border-radius:4px;
+  padding:10px 12px; margin-bottom:14px;
+}
+.graph-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
+.graph-title { font-size:17px; font-weight:700; color:var(--ink); }
+.graph-title em { font-style:italic; }
+.graph-sub { font-size:14px; color:var(--muted); font-family:var(--font-mono); margin-bottom:8px; }
+.entropy-tag {
+  font-family:var(--font-mono); font-size:13px; color:var(--muted);
+  display:flex; align-items:center; gap:6px;
+}
+.entropy-tag .bar { width:40px; height:4px; background:#e5e7eb; border-radius:2px; overflow:hidden; display:inline-block; }
+.entropy-tag .fill { display:block; height:100%; border-radius:2px; }
+.fill-med { width:55%; background:var(--amber); }
+.lbl-med { font-weight:800; color:var(--amber); }
+
+/* ── Evidence ── */
+.evidence { margin-bottom:12px; }
+.ev-hd { font-size:14px; font-weight:700; color:var(--secondary); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; }
+.ev-row { display:flex; align-items:center; gap:8px; font-size:15px; font-family:var(--font-mono); color:var(--body); line-height:1.7; }
+.ev-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.ev-g { background:var(--green); } .ev-m { background:var(--muted); }
+.ev-st { font-weight:700; margin-left:auto; white-space:nowrap; }
+.ev-st-g { color:var(--green); } .ev-st-m { color:var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="fig-label">
+  <div class="fig-id">Scenario A<em>— Microservice API Upgrade</em></div>
+  <div class="fig-domain">Software Engineering</div>
+</div>
+
+<div class="panels">
+
+<!-- ════ LEFT ════ -->
+<div class="panel">
+  <div class="panel-title">(a) Vibe Coding</div>
+
+  <div class="code"><span class="cm">// Payment API v2 — flatten response</span>
+<span class="kw">interface</span> <span class="ty">PaymentResponse</span> {
+<span class="del">  details: { items: Item[]; risk_score: number };</span>
+<span class="add">  items: Item[];  risk_score: number;</span>
+  status: <span class="str">'ok'</span> | <span class="str">'failed'</span>;
+}</div>
+
+  <div class="chat">
+    <div class="chat-line"><span class="rl">User:</span> Upgrade payment API to v2, flatten the response</div>
+    <div class="chat-line"><span class="rl-a">Agent:</span> Flattened <code style="font-family:var(--font-mono);font-size:15px;">PaymentResponse</code>, updated 2 files</div>
+    <div class="chat-ok">&#10003; 47 tests passed · PR ready</div>
+    <div class="chat-line"><span class="rl">User:</span> Looks good, merge it</div>
+  </div>
+
+  <div class="blind">
+    <div class="blind-hd">Blind Spots (invisible in context)</div>
+    <div class="blind-item"><strong>order-service</strong> also consumes this API — not in this repo</div>
+    <div class="blind-item"><strong>risk-engine</strong> reads <code>details.risk_score</code> (nested path removed)</div>
+    <div class="blind-item">No rollout strategy — backward compatibility unknown</div>
+  </div>
+
+  <div class="outcome out-fail">
+    <div class="out-hd out-hd-fail">After deployment</div>
+    <div class="out-row"><span class="tm">T+0</span> Deploy — all CI green</div>
+    <div class="out-row"><span class="tm">T+2h</span> <code>order-service</code> 500 errors (parse failure)</div>
+    <div class="out-row"><span class="tm">T+6h</span> <code>risk-engine</code> silent degradation — fraud rules bypassed</div>
+    <div class="out-row"><span class="tm">T+8h</span> Emergency rollback</div>
+  </div>
+</div>
+
+<!-- ════ RIGHT ════ -->
+<div class="panel panel-right">
+  <div class="panel-title">(b) Agentic Consensus</div>
+
+  <div class="graph-box">
+    <div class="graph-header">
+      <div class="graph-title">Consensus Layer <em>C</em> — Service Dependencies</div>
+      <div class="entropy-tag">H(C|I) <span class="bar"><span class="fill fill-med"></span></span> <span class="lbl-med">MED</span></div>
+    </div>
+    <div class="graph-sub">typed property graph · API contracts · evidence-linked</div>
+
+    <svg width="100%" height="175" viewBox="0 0 660 175" fill="none">
+      <defs>
+        <marker id="ag" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#15803d"/></marker>
+        <marker id="ar" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#b91c1c"/></marker>
+        <marker id="am" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#9ca3af"/></marker>
+      </defs>
+
+      <!-- payment-service -->
+      <rect x="210" y="2" width="175" height="34" rx="3" fill="white" stroke="#d1d5db"/>
+      <rect x="210" y="2" width="4" height="34" fill="#92400e" rx="2"/>
+      <text x="298" y="18" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" fill="#1f2937" font-weight="700">payment-service</text>
+      <text x="298" y="32" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#92400e">v1 → v2 (breaking change)</text>
+
+      <!-- edges -->
+      <line x1="250" y1="36" x2="95" y2="72" stroke="#15803d" stroke-width="1.5" marker-end="url(#ag)"/>
+      <line x1="280" y1="36" x2="248" y2="72" stroke="#b91c1c" stroke-width="1.5" marker-end="url(#ar)"/>
+      <line x1="320" y1="36" x2="400" y2="72" stroke="#b91c1c" stroke-width="1.5" marker-end="url(#ar)"/>
+      <line x1="355" y1="36" x2="540" y2="72" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#am)"/>
+
+      <!-- edge labels -->
+      <text x="155" y="58" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#15803d" font-weight="600">adapted</text>
+      <text x="260" y="58" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#b91c1c" font-weight="700">BREAKING</text>
+      <text x="372" y="58" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#b91c1c" font-weight="700">BREAKING</text>
+      <text x="468" y="58" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#9ca3af">unconfirmed</text>
+
+      <!-- checkout -->
+      <rect x="10" y="74" width="145" height="34" rx="3" fill="white" stroke="#15803d"/>
+      <rect x="10" y="74" width="4" height="34" fill="#15803d" rx="2"/>
+      <text x="82" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" fill="#1f2937" font-weight="600">checkout</text>
+      <text x="82" y="103" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#15803d">adapted ✓</text>
+
+      <!-- order -->
+      <rect x="172" y="74" width="155" height="34" rx="3" fill="white" stroke="#b91c1c"/>
+      <rect x="172" y="74" width="4" height="34" fill="#b91c1c" rx="2"/>
+      <text x="250" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" fill="#1f2937" font-weight="600">order-service</text>
+      <text x="250" y="103" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b91c1c">details.items ✗</text>
+
+      <!-- risk -->
+      <rect x="340" y="74" width="155" height="34" rx="3" fill="white" stroke="#b91c1c"/>
+      <rect x="340" y="74" width="4" height="34" fill="#b91c1c" rx="2"/>
+      <text x="418" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" fill="#1f2937" font-weight="600">risk-engine</text>
+      <text x="418" y="103" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#b91c1c">details.risk_score ✗</text>
+
+      <!-- analytics -->
+      <rect x="508" y="74" width="105" height="34" rx="3" fill="white" stroke="#d1d5db" stroke-dasharray="5,3"/>
+      <rect x="508" y="74" width="4" height="34" fill="#9ca3af" rx="2"/>
+      <text x="561" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" fill="#9ca3af" font-weight="600">analytics</text>
+      <text x="561" y="103" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#9ca3af">? pending</text>
+
+      <!-- contract annotations -->
+      <rect x="172" y="116" width="155" height="20" rx="3" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.8" stroke-dasharray="4,3"/>
+      <text x="250" y="130" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#92400e">contract: items[]</text>
+      <rect x="340" y="116" width="155" height="20" rx="3" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.8" stroke-dasharray="4,3"/>
+      <text x="418" y="130" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#92400e">contract: risk_score</text>
+
+      <!-- operators -->
+      <line x1="0" y1="148" x2="660" y2="148" stroke="#e5e7eb" stroke-width="0.8"/>
+      <rect x="70" y="154" width="230" height="20" rx="3" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.8"/>
+      <text x="185" y="168" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#1e40af" font-weight="700">Φ realize: C → artifact diffs</text>
+      <rect x="320" y="154" width="260" height="20" rx="3" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.8"/>
+      <text x="450" y="168" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12" fill="#6d28d9" font-weight="700">Ψ rehydrate: diffs → update C</text>
+    </svg>
+  </div>
+
+  <div class="evidence">
+    <div class="ev-hd">Evidence E</div>
+    <div class="ev-row"><div class="ev-dot ev-g"></div> checkout-service contract test <span class="ev-st ev-st-g">✓ passed</span></div>
+    <div class="ev-row"><div class="ev-dot ev-g"></div> order-service contract test <span class="ev-st ev-st-g">✓ passed (after fix)</span></div>
+    <div class="ev-row"><div class="ev-dot ev-g"></div> risk-engine integration <span class="ev-st ev-st-g">✓ passed (mapping)</span></div>
+    <div class="ev-row"><div class="ev-dot ev-m"></div> analytics-pipeline <span class="ev-st ev-st-m">○ pending</span></div>
+  </div>
+
+  <div class="outcome out-ok">
+    <div class="out-hd out-hd-ok">After deployment</div>
+    <div class="out-row"><span class="tm">T+0</span> Gradual rollout; breaking consumers adapted first</div>
+    <div class="out-row"><span class="tm">T+24h</span> Full cutover after analytics confirms — zero incidents</div>
+    <div class="out-row"><span class="tm">T+90d</span> Decisions queryable in C; no archaeology needed</div>
+  </div>
+</div>
+
+</div><!-- /panels -->
+</body>
+</html>

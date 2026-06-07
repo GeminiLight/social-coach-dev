@@ -1,0 +1,41 @@
+
+\section{Discussion}
+
+\subsection{Alternative Views}
+We address three substantive objections to Agentic Consensus.
+
+\paragraph{``Better models will solve this without a consensus layer.''}
+One might argue that sufficiently capable agents will internalize system structure implicitly, making explicit representation unnecessary.
+Structurally, the problem is not model capability but human legibility. Even a perfect model that silently maintains a correct internal world model cannot provide the transparency, auditability, and governance that human-AI collaboration requires.
+The consensus layer is not a crutch for weak models. It is the interface through which humans exercise meaningful control regardless of model quality.
+As models improve, the consensus layer becomes easier to maintain, not unnecessary.
+More capable models can produce statistically valid outputs on structurally invalid inputs, and the failure mode becomes harder to detect as scale grows.
+
+\paragraph{``$\Psi$ will hallucinate, making $C$ unreliable.''}
+This is a real risk, and we address it by design.
+$\Psi$ does not produce a single deterministic rehydrated graph. It produces candidate deltas $\{\Delta C_1, \Delta C_2, \ldots\}$ with uncertainty scores.
+Ambiguous rehydration increases $\mathcal{H}(C \mid I)$ and triggers clarification rather than silent reinterpretation.
+Round-trip consistency is treated as a soft invariant. The system monitors structural drift $d(C, \Psi(\Phi(C, A)))$ and flags divergence above a threshold rather than demanding exact isomorphism.
+Hallucinated structure becomes visible as unsupported claims in $C$ that evidence links fail to corroborate.
+The historical failure of UML synchronization tools is instructive but not analogous. Those tools required human maintenance of a secondary artifact. $\Phi$ and $\Psi$ are agent-executed operators running continuously, removing the cost that caused UML to decay.
+An escape hatch for low-overhead changes remains a necessary design requirement.
+
+\paragraph{``Graph-based representations are brittle for dynamic, exploratory work.''}
+Early-stage exploratory coding is inherently unstructured, and imposing graph schemas too early is a real constraint on creativity. We do not propose that Agentic Consensus applies to all workflows uniformly.
+The consensus layer should be incrementally adoptable. Systems begin with partial, low-confidence structure and tighten it as projects stabilize.
+High consensus entropy is a signal to not impose structure yet, not a failure.
+On cognitive load: $C$ is never exposed as a raw graph. The navigator projects task-relevant subgraphs on demand, so what humans review is a structured summary of the relevant slice, not the full topology.
+
+\subsection{Limitations}
+Agentic Consensus raises practical concerns in two areas: system reliability and real-world deployment.
+
+\paragraph{Runtime Risks.}
+Agentic Consensus requires careful governance: access control over $C$, redaction for sharing, and escape hatches for low-friction work when structure is unnecessary.
+Agents may hallucinate structure; these failures should be visible as high-entropy regions and blocked by required evidence. Evidence itself is not infallible (tests can be flaky, traces noisy, static analyses prone to false positives), so each evidence link in $E$ should carry a confidence weight and contradictory evidence should surface as an explicit inconsistency in $C$, not be silently resolved.
+
+\paragraph{Progressive Adoption.}
+For large legacy systems, full rehydration is intractable; $\Psi$ must instead bootstrap incrementally, covering critical modules first and expanding as engineers interact with the system, with uncovered regions marked as high-entropy zones.
+For large codebases, $C$ need not be monolithic: sub-graph partitioning along package or service boundaries lets each agent operate on a local view, with the same ownership boundaries that govern human collaboration governing agent coordination.
+
+\subsection{Broader Implications}
+Although motivated by coding, Agentic Consensus generalizes to any knowledge discovery system where agents autonomously discover, visualize, and synchronize latent structure in complex datasets or socio-technical systems for human oversight and~intervention.

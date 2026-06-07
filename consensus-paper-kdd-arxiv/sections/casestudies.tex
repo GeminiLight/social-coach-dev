@@ -1,0 +1,37 @@
+
+\section{Case Studies}
+We present two illustrative scenarios grounded in patterns commonly observed in data mining practice, shown in Figure~\ref{fig:democases}.
+
+\subsection{ML Training Pipeline: Silent Degradation}
+
+\textit{Setup.} A recommendation model's weekly AUC drops 2 points.
+Three days of chat-driven debugging (learning rate tuning, feature rollback, null checks) produce no recovery; each session restarts without knowing what prior attempts ruled out.
+
+\textit{What vibe coding misses.} Root cause is invisible: \texttt{click\_rate\_7d}'s computation window silently changed from 7d to 3d as a side-effect of an unrelated PR, and no links the feature to its consuming model.
+
+\textit{How $C$ responds.} $C$ maintains pipeline lineage (\texttt{data\_snapshot} $\to$ \texttt{feature\_pipeline} $\to$ \texttt{model} $\to$ \texttt{eval\_metrics}) and constructs two competing hypotheses, each with required discriminating evidence: (A)~data shift; (B)~feature drift.
+Because $\mathcal{H}(C \mid I)$ is high, the system requests two targeted checks rather than guessing.
+Within hours: (A) is eliminated; (B) is confirmed by drift test and traced via $\Psi$ to PR~\#847.
+Fix: revert window to 7d. AUC recovers the same day.
+
+\textit{Outcome.} Vibe coding: 4 days, 3 wasted training cycles, root cause unknown.
+Agentic Consensus: root cause located and fixed within hours; the fix is recorded in $C$ as evidence for future changes.
+
+\subsection{A/B Experiment: Feature Leakage}
+
+\textit{Setup.} A new recommendation strategy yields a statistically significant CTR lift.
+The agent recommends full rollout.
+
+\textit{What vibe coding misses.} Treatment has 13 features; control has 12. The extra feature, \texttt{user\_realtime\_signal}, exists only in treatment: the lift measures feature advantage, not strategy advantage. The agent cannot see the feature pipelines, which live in a separate repo.
+
+\textit{How $C$ responds.} $C$ maintains an experiment causal DAG: the \texttt{experiment\_config} feeds both the control and treatment feature pipelines, which in turn feed \texttt{metric\_definition}.
+Before any number is produced, the auditor checks the feature parity contract; it fails.
+The analysis is blocked. After removing \texttt{user\_realtime\_signal} and re-running, lift is not significant. The strategy does not work.
+
+\textit{Outcome.} Without $C$, a false positive triggers full rollout and takes 2--3 weeks in production to expose; with $C$, the structural violation is caught before inference begins.
+The original result was statistically correct but causally invalid; a more capable model would have produced the same wrong answer.
+
+\paragraph{What these cases demonstrate.}
+The first case shows $C$ as a \emph{diagnosis surface}: hypotheses are explicit, entropy is measurable, and evidence collapses uncertainty.
+The second shows $C$ as a \emph{validity gate}: structural contracts block causally invalid conclusions before they are produced.
+In both cases the failure is not generative; it is structural. As AI throughput scales, opacity accumulates faster than humans can inspect it; without a governable consensus layer, scaled AI-assisted engineering degrades into scaled opacity.
