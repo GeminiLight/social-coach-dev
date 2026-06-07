@@ -260,6 +260,7 @@ h3 {
 
 .hero-subtitle,
 .paper-authors,
+.paper-affiliations,
 .section-header p,
 .resource-card p {
   margin: 0;
@@ -271,11 +272,26 @@ h3 {
 
 .paper-authors {
   max-width: 92ch;
-  margin: -8px 0 18px;
+  margin: -8px 0 8px;
   color: var(--ink);
   font-size: clamp(14px, 1.2vw, 17px);
   font-weight: 680;
   line-height: 1.45;
+}
+
+.paper-affiliations {
+  max-width: 92ch;
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: clamp(13px, 1.05vw, 15px);
+  font-weight: 640;
+  line-height: 1.45;
+}
+
+.paper-authors sup,
+.paper-affiliations sup {
+  font-size: 0.68em;
+  line-height: 0;
 }
 
 .hero-actions,
@@ -584,6 +600,25 @@ figcaption,
   gap: 20px;
 }
 
+.knowledge-layout {
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.knowledge-layout .plain-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.knowledge-layout .artifact-stack {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.knowledge-layout .artifact-stack figure {
+  display: grid;
+  align-content: space-between;
+}
+
 .plain-list {
   display: grid;
   gap: 12px;
@@ -837,6 +872,11 @@ pre {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .knowledge-layout .plain-list,
+  .knowledge-layout .artifact-stack {
+    grid-template-columns: 1fr;
+  }
+
   .resource-actions {
     justify-content: flex-start;
   }
@@ -870,6 +910,11 @@ pre {
 
   .paper-authors {
     font-size: 13px;
+    line-height: 1.42;
+  }
+
+  .paper-affiliations {
+    font-size: 12px;
     line-height: 1.42;
   }
 
