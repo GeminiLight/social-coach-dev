@@ -8,9 +8,6 @@ venv/
 # Local agent/session state
 .cc-branch/
 
-# The manuscript is published from its own repository.
-paper/
-
 # Downloaded source texts and run logs are local artifacts.
 data/books_content/
 download_log.txt

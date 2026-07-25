@@ -42,7 +42,22 @@ data/
   corpus_final.json         # Final curated corpus
 ```
 
-The manuscript is maintained separately in the `social-coach-paper` repository. Raw downloaded book texts and run logs are intentionally kept local and are not committed to the public development repository.
+The manuscript is maintained in the separate `social-coach-paper` repository
+and included here at `paper/` as a Git submodule. Clone both repositories in one
+step with:
+
+```bash
+git clone --recurse-submodules https://github.com/GeminiLight/social-coach-dev.git
+```
+
+For an existing checkout, initialize or refresh the manuscript with:
+
+```bash
+git submodule update --init --recursive
+```
+
+Raw downloaded book texts and run logs are intentionally kept local and are not
+committed to the public development repository.
 
 ## Project Page
 
