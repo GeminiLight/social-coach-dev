@@ -40,17 +40,19 @@ data/
   corpus_tagged.json        # Tagged concepts
   corpus_validated.json     # Validated concepts
   corpus_final.json         # Final curated corpus
+paper/                      # Manuscript submodule
+artifact/                   # Anonymous review artifact submodule
 ```
 
 The manuscript is maintained in the separate `social-coach-paper` repository
-and included here at `paper/` as a Git submodule. Clone both repositories in one
-step with:
+and included here at `paper/` as a Git submodule. The anonymized reproduction
+package is maintained at `artifact/`. Clone the project and both submodules with:
 
 ```bash
 git clone --recurse-submodules https://github.com/GeminiLight/social-coach-dev.git
 ```
 
-For an existing checkout, initialize or refresh the manuscript with:
+For an existing checkout, initialize or refresh both submodules with:
 
 ```bash
 git submodule update --init --recursive
@@ -77,4 +79,10 @@ python src/extractor.py         # Extract concepts
 python src/tagger.py            # Tag concepts
 python src/validator.py         # Validate
 python src/refiner.py           # Refine final corpus
+```
+
+Generate a readable, validated catalog from the selected 200-book CSV:
+
+```bash
+python3 scripts/export_book_list.py
 ```
